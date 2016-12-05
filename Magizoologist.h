@@ -1,7 +1,7 @@
 /*
  * Magizoologist.h
  *
- *  Created on: 5 Ã¡Ã£Ã¶Ã®Ã— 2016
+ *  Created on: 5 áãöî× 2016
  *      Author: Liron
  */
 
@@ -22,6 +22,7 @@ private:
 	AVLTree<Creature, int>* creaturesById;
 	AVLTree<Creature, levelKey>* creaturesByLevel;
 	Creature* mostDangerous;
+	int mostDangerousID;
 
 
 public:
@@ -69,7 +70,7 @@ public:
 	bool operator<=(levelKey key){
 		if(this->level < key.level)
 			return true;
-		if(this->id <= key.id)
+		if(this->id >= key.id)
 			return true;
 		return false;
 	}
@@ -97,3 +98,4 @@ public:
 
 
 #endif /* MAGIZOOLOGIST_H_ */
+

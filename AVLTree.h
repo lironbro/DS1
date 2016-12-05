@@ -646,6 +646,11 @@ public:
 	}
 
 
+	AVLTree* getParent(){
+		return this->parent;
+	}
+
+
 	/*
 	 * returns the balance factor
 	 */
