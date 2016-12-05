@@ -277,75 +277,70 @@ public:
 	/*
 	 * removes the node from the tree with the given index
 	 */
-	void remove(int index){
-		if(this == NULL)	// NULL
-			return;
-		if(this->index == index)	// if this is the node to remove
-		{
-			if(this->left == NULL && this->right == NULL)	// if leaf
-			{
-				if(this->parent != NULL)
-				{
-					if(this->parent->left == this)
-						this->parent->left = NULL;
+	AVLTree* remove(int index){
+		if(this == NULL){
+			throw new NotFoundException();
+		}
+		else if(this->index == index){
+			if(this->left == NULL && this->right == NULL){
+				if(this->parent != NULL){
+					if(this == this->parent->left) this->parent->left = NULL;
 					else
 						this->parent->right = NULL;
-					this->parent->updateHeight();
-					this->parent->updateSize();
+
+					delete this;
 				}
-				//delete this;	// TODO: check this out
+				else{
+					delete this->info;
+					this->index=-1;
+					this->size = 0;
+					this->height = -1;
+					return this;
+				}
 			}
-			else if(this->left != NULL && this->right == NULL)	// if only left child
-			{
-				if(this->parent != NULL)
-				{
-					if(this->parent->left == this)
-						this->parent->left = this->left;
+			else if(this->left == NULL && this->right != NULL){
+				if(this->parent != NULL){
+					if(this == this->parent->left) this->parent->left = this->right;
+					else this->parent->right = this->right;
+
+					this->right->parent = this->parent;
+					delete this;
+				}
+				else{
+					AVLTree* tmp = this->right;
+					delete this;
+					return tmp;
+				}
+			}
+			else if(this->left != NULL && this->right == NULL){
+				if(this->parent != NULL){
+					if(this == this->parent->left) this->parent->left = this->left;
 					else
 						this->parent->right = this->left;
+
+					this->left->parent = this->parent;
+					delete this;
 				}
-				this->left->parent = this->parent;
-				this->parent->updateHeight();
-				this->parent->updateSize();
-				this->fixBalanceFactor();
-				delete this;
-			}
-			else if(this->left == NULL && this->right != NULL)	// if only right child
-			{
-				if(this->parent != NULL)
-				{
-					if(this->parent->left == this)
-						this->parent->left = this->right;
-					else
-						this->parent->right = this->right;
+				else{
+					AVLTree* tmp = this->left;
+					delete this;
+					return tmp;
 				}
-				this->right->parent = this->parent;
-				this->parent->updateHeight();
-				this->parent->updateSize();
-				this->fixBalanceFactor();
-				delete this;
-			}
-			else
-			{	// if two children
-				AVLTree* next = this->findNextInorder();
-				this->info = next->info;
-				this->index = next->index;
-				next->remove(next->index);
-			}
-		}
-		else	// if this isn't the node to remove
-		{
-			if(index < this->index)
-			{
-				if(this->left != NULL)
-					this->left->remove(index);
-				else
-					if(this->right != NULL)
-						this->right->remove(index);
 			}
 		}
 
+		else if(index < this->index){
+			if(this->left == NULL)
+				throw new NotFoundException();
+			this->left->remove(index);
+			return this;
+		}
+		if(this->right == NULL)
+			throw new NotFoundException();
+		this->right->remove(index);
+		return this;
 	}
+
 
 
 	/*
@@ -503,8 +498,9 @@ public:
 		AVLTree* rl = right->left;
 		rotateLL(right);
 		rotateRR(root);
-		//rl->height--;
-		//root->height--;
+		rl->height++;
+		right->height++;
+		root->updateHeight();
 	}
 
 
@@ -524,6 +520,7 @@ public:
 		rotateLL(root);		// decreases root height by 2, lr height is the same
 		lr->height++;
 		left->height++;
+		root->updateHeight();
 	}
 
 
@@ -532,11 +529,11 @@ public:
 	 * which will consist of index-info nodes as in the given arrays
 	 */
 	static AVLTree<T>* fillFromArray(int* indexes, T** info, int n)
-																																	{
+																																			{
 		AVLTree<T>* res = new AVLTree<T>(n);			// TODO: fuck this stupid fucking language
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
-																																	}
+																																			}
 
 
 	/*
