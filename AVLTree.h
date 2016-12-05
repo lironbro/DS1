@@ -16,17 +16,14 @@
 #include <stdlib.h>
 
 
-template <class T>
-
+template <class T,class S>
 
 class AVLTree
 {
 
-
 private:
-
 	T* info;
-	int index;
+	S index;
 	AVLTree* parent;
 	AVLTree* left;
 	AVLTree* right;
@@ -84,7 +81,7 @@ private:
 	/*
 	 * helps with filling an avl tree with values in the index-info arrays
 	 */
-	void aux_fillFromArray(int* indexes, T** info, int i){
+	void aux_fillFromArray(S* indexes, T** info, int i){
 		if(this->left != NULL){
 			left->aux_fillFromArray(indexes, info, i);
 			i += left->size;
@@ -104,7 +101,7 @@ private:
 	/*
 	 * helps with turning the avl tree into an index and info array
 	 */
-	void aux_turnToArrays(int* indexes ,T** info, int i){
+	void aux_turnToArrays(S* indexes ,T** info, int i){
 		if (this == NULL){
 			return;
 		}
@@ -134,7 +131,7 @@ public:
 	/*
 	 * creates an AVL tree
 	 */
-	AVLTree (T* info = NULL, int index = -1, AVLTree* parent = NULL, int size = 1, int height = 0):
+	AVLTree (T* info = NULL, S index = -1, AVLTree* parent = NULL, int size = 1, int height = 0):
 		info(info),index(index) ,parent(parent), left(NULL), right(NULL),
 		size(size), height(height)
 	{
@@ -144,6 +141,11 @@ public:
 		}
 	}
 
+
+	~AVLTree(){
+		if(right != NULL) delete right;
+		if(left != NULL) delete left;
+	}
 
 	/*
 	 * creates an almost complete tree, which will have empty info
@@ -186,7 +188,7 @@ public:
 	/*
 	 * finds the parent of the node with the requested index
 	 */
-	AVLTree* findParent(int index){
+	AVLTree* findParent(S index){
 		if(this == NULL){
 			return NULL;
 		}
@@ -205,7 +207,7 @@ public:
 	/*
 	 * finds the value of the node with the requested index
 	 */
-	AVLTree* find(int index){
+	AVLTree* find(S index){
 		if(this == NULL){
 			return NULL;
 		}
@@ -225,7 +227,7 @@ public:
 	 * inserts the index and info into the AVL tree
 	 * returns the root of the tree
 	 */
-	AVLTree* insert(T* info ,int index) {
+	AVLTree* insert(T* info ,S index) {
 		if (this->parent == NULL && this->size == 0){	// if the tree is empty
 			this->info = info;
 			this->index = index;
@@ -278,7 +280,7 @@ public:
 	/*
 	 * removes the node from the tree with the given index
 	 */
-	AVLTree* remove(int index){
+	AVLTree* remove(S index){
 		if(this == NULL){
 			throw new NotFoundException();
 		}
@@ -606,9 +608,9 @@ public:
 	 * returns a pointer to an avl tree which will be the almost full tree
 	 * which will consist of index-info nodes as in the given arrays
 	 */
-	static AVLTree<T>* fillFromArray(int* indexes, T** info, int n)
+	static AVLTree<T,S>* fillFromArray(S* indexes, T** info, int n)
 																																																													{
-		AVLTree<T>* res = new AVLTree<T>(n);			// TODO: fuck this stupid fucking language
+		AVLTree<T,S>* res = new AVLTree<T,S>(n);			// TODO: fuck this stupid fucking language
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
 																																																													}
@@ -617,7 +619,7 @@ public:
 	/*
 	 * turns the avl tree into a pair of index and info arrays
 	 */
-	void turnToArrays(int* indexes ,T** info)
+	void turnToArrays(S* indexes ,T** info)
 	{
 		aux_turnToArrays(indexes ,info, 0);
 	}
@@ -638,6 +640,10 @@ public:
 	int getHeight()
 	{
 		return this->height;
+	}
+
+	T* getInfo(){
+		return this->info;
 	}
 
 
