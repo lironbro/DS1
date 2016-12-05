@@ -1,8 +1,9 @@
 
+
 /*
  * AVLTree.h
  *
- *  Created on: 4 áãöî 2016
+ *  Created on: 4 Ã¡Ã£Ã¶Ã® 2016
  *      Author: user
  */
 
@@ -240,7 +241,7 @@ public:
 				this->left = new AVLTree(info,index, this);
 				updateSize();
 				updateHeight();
-				fixBalanceFactor();		// should go up to the problematic node
+				fixBalanceFactorInsert();		// should go up to the problematic node
 				return getRoot();
 			}
 			else{
@@ -252,7 +253,7 @@ public:
 				this->right = new AVLTree(info,index, this);
 				updateSize();
 				updateHeight();
-				fixBalanceFactor();
+				fixBalanceFactorInsert();
 				return getRoot();
 			}
 			else{
@@ -288,7 +289,12 @@ public:
 					else
 						this->parent->right = NULL;
 
+					AVLTree* tmp = this->parent;
 					delete this;
+					tmp->updateHeight();
+					tmp->updateSize();
+					AVLTree* y = tmp->fixBalanceFactorRemove();
+					return y;
 				}
 				else{
 					delete this->info;
@@ -304,7 +310,11 @@ public:
 					else this->parent->right = this->right;
 
 					this->right->parent = this->parent;
+					AVLTree* tmp = this->parent;
 					delete this;
+					tmp->updateHeight();
+					tmp->updateSize();
+					return tmp->fixBalanceFactorRemove();
 				}
 				else{
 					AVLTree* tmp = this->right;
@@ -319,7 +329,11 @@ public:
 						this->parent->right = this->left;
 
 					this->left->parent = this->parent;
+					AVLTree* tmp = this->parent;
 					delete this;
+					tmp->updateHeight();
+					tmp->updateSize();
+					return tmp->fixBalanceFactorRemove();
 				}
 				else{
 					AVLTree* tmp = this->left;
@@ -327,18 +341,61 @@ public:
 					return tmp;
 				}
 			}
+			else if(this->left != NULL && this->right != NULL){
+				//if(this->parent != NULL){
+				AVLTree* next = this->findNextInorder();
+
+				if(this->right != next){
+					AVLTree* tmp = next->right;
+					if (this->right != NULL) this->right->parent = next;
+					if (next->right != NULL) next->right->parent = this;
+					next->right = this->right;
+					this->right = tmp;
+
+					tmp = next->left;
+					if (this->left != NULL) this->left->parent = next;
+					if (next->left != NULL) next->left->parent = this;
+					next->left = this->left;
+					this->left = tmp;
+
+					tmp = next->parent;
+					next->parent = this->parent;
+					this->parent = tmp;
+				}
+				else{
+					this->right = next->right;
+					next->right = this;
+
+					AVLTree* tmp = next->left;
+					next->left = this->left;
+					this->left = tmp;
+
+					next->parent = this->parent;
+					if(this->parent->right == this){
+						this->parent->right = next;
+					}else{
+						this->parent->left = next;
+					}
+					this->parent = next;
+
+					next->left->parent = next;
+				}
+				AVLTree* x =  this->remove(index); //TODO: delete x
+				return x;
+			}
 		}
 
 		else if(index < this->index){
 			if(this->left == NULL)
 				throw new NotFoundException();
-			this->left->remove(index);
-			return this;
+			return this->left->remove(index);
 		}
-		if(this->right == NULL)
-			throw new NotFoundException();
-		this->right->remove(index);
-		return this;
+		else{
+			if(this->right == NULL)
+				throw new NotFoundException();
+			return this->right->remove(index);
+
+		}
 	}
 
 
@@ -383,12 +440,12 @@ public:
 	/*
 	 * fix the node with bad balance factor, return the node that switched places with the old one
 	 */
-	AVLTree* fixBalanceFactor(){
+	AVLTree* fixBalanceFactorInsert(){
 		AVLTree* root = this->findBadBalanceFactor();
 		if(root == NULL)
 			return this;
 
-		if(this->index > root->index){
+		if(this->index >= root->index){
 			if(root->right->getBalanceFactor()==1){
 				this->rotateRL(root);
 			}
@@ -406,6 +463,27 @@ public:
 		}
 		return root->parent;		// at the end of every rotation the problematic
 		// node will be the offspring of the new root
+	}
+
+
+	AVLTree* fixBalanceFactorRemove(){
+		if(this->getBalanceFactor() == -2 && this->right != NULL){
+			if( this->right->getBalanceFactor() == 1){
+				rotateRL(this);
+			}
+			else{
+				rotateRR(this);
+			}
+		}
+		else if (this->getBalanceFactor() == 2 && this->left != NULL){
+			if( this->left->getBalanceFactor() == -1){
+				rotateLR(this);
+			}
+			else{
+				rotateLL(this);
+			}
+		}
+		return this->parent;
 	}
 
 
@@ -529,11 +607,11 @@ public:
 	 * which will consist of index-info nodes as in the given arrays
 	 */
 	static AVLTree<T>* fillFromArray(int* indexes, T** info, int n)
-																																			{
+																																																													{
 		AVLTree<T>* res = new AVLTree<T>(n);			// TODO: fuck this stupid fucking language
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
-																																			}
+																																																													}
 
 
 	/*
@@ -581,4 +659,3 @@ public:
 };
 
 #endif /* AVLTREE_H_ */
-
