@@ -34,7 +34,7 @@ public:
 
 	int getLevel();
 
-	void setLevel(int dangerLevel);
+	void increaseLevel(int delta);
 
 	Magizoologist* getMagizoologist();
 

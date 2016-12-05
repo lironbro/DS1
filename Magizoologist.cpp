@@ -17,11 +17,10 @@ Magizoologist::Magizoologist(){
 }
 
 
-void Magizoologist::addCreature(int id, int level){
-	Creature* creature = new Creature(level, this);
+void Magizoologist::addCreature(Creature* creature, int id){
 	creaturesById = creaturesById->insert(creature, id);
 	creature->setById(creaturesById->find(id));
-	levelKey lk = levelKey(level, id);
+	levelKey lk = levelKey(creature->getLevel(), id);
 	creaturesByLevel = creaturesByLevel->insert(creature, lk);
 	creature->setByLevel(creaturesByLevel->find(lk));
 	if(mostDangerous == NULL){
@@ -71,6 +70,12 @@ void Magizoologist::getAllCreaturesByLevel(int** creatures, int* numOfCreatures)
 	}
 	creatures = flip(creatures, numOfCreatures);
 	free(lks);
+}
+
+
+Magizoologist::~Magizoologist(){
+	delete creaturesByLevel;
+	delete creaturesById;
 }
 
 

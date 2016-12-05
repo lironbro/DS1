@@ -30,7 +30,7 @@ public:
 	Magizoologist();
 
 
-	void addCreature(int level, int id);
+	void addCreature(Creature* creature, int id);	// TODO: check this when not stupid
 
 
 	void releaseCreature(int id);
@@ -40,6 +40,9 @@ public:
 
 
 	void getAllCreaturesByLevel(int** creatures, int* numOfCreatures);
+
+
+	~Magizoologist();
 };
 
 

@@ -17,8 +17,8 @@ int Creature::getLevel(){
 	return level;
 }
 
-void Creature::setLevel(int dangerLevel){
-	level = dangerLevel;
+void Creature::increaseLevel(int delta){
+	level += delta;
 }
 
 Magizoologist* Creature::getMagizoologist(){
