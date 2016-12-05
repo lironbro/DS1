@@ -1,7 +1,7 @@
 /*
  * Magizoologist.h
  *
- *  Created on: 5 áãöî× 2016
+ *  Created on: 5 Ã¡Ã£Ã¶Ã®Ã— 2016
  *      Author: Liron
  */
 
@@ -84,6 +84,13 @@ public:
 
 	bool operator>(levelKey key){
 		return *this >= key && !(*this == key);
+	}
+
+	levelKey(bool i){
+		if(!i){
+			level =-1;
+			id = -1;
+		}
 	}
 
 };

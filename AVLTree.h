@@ -1,5 +1,3 @@
-
-
 /*
  * AVLTree.h
  *
@@ -131,7 +129,7 @@ public:
 	/*
 	 * creates an AVL tree
 	 */
-	AVLTree(T* info, S index, AVLTree* parent, int size = 1, int height = 0):
+	AVLTree(T* info=NULL, S index=false, AVLTree* parent=NULL, int size = 1, int height = 0):
 		info(info),index(index) ,parent(parent), left(NULL), right(NULL),
 		size(size), height(height)
 	{
@@ -141,16 +139,6 @@ public:
 		}
 	}
 
-	AVLTree()
-	{
-		info = NULL;
-		index = S();
-		parent = NULL;
-		left = NULL;
-		right = NULL;
-		size = 0;
-		height = 0;
-	}
 
 
 
