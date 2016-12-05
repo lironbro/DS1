@@ -131,7 +131,7 @@ public:
 	/*
 	 * creates an AVL tree
 	 */
-	AVLTree (T* info = NULL, S index = -1, AVLTree* parent = NULL, int size = 1, int height = 0):
+	AVLTree(T* info, S index, AVLTree* parent, int size = 1, int height = 0):
 		info(info),index(index) ,parent(parent), left(NULL), right(NULL),
 		size(size), height(height)
 	{
@@ -140,6 +140,18 @@ public:
 			this->height = 0;
 		}
 	}
+
+	AVLTree()
+	{
+		info = NULL;
+		index = S();
+		parent = NULL;
+		left = NULL;
+		right = NULL;
+		size = 0;
+		height = 0;
+	}
+
 
 
 	~AVLTree(){
@@ -300,7 +312,6 @@ public:
 				}
 				else{
 					delete this->info;
-					this->index=-1;
 					this->size = 0;
 					this->height = -1;
 					return this;
@@ -609,11 +620,11 @@ public:
 	 * which will consist of index-info nodes as in the given arrays
 	 */
 	static AVLTree<T,S>* fillFromArray(S* indexes, T** info, int n)
-																																																													{
+																																																																			{
 		AVLTree<T,S>* res = new AVLTree<T,S>(n);			// TODO: fuck this stupid fucking language
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
-																																																													}
+																																																																			}
 
 
 	/*

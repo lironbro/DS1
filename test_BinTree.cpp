@@ -9,6 +9,8 @@
 
 int main(){
 
+	/*
+
 	//int meaningful = ceil(log2(7));
 
 	// constructor test 	- passed
@@ -90,7 +92,8 @@ int main(){
 
 
 	delete arr;
-
+	*/
+	return 0;
 }
 
 
