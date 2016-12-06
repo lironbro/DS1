@@ -94,24 +94,33 @@ void Magizoologist::updateMostDangerous(){
 	if(this == NULL)
 		return ;
 	this->mostDangerous = mostDangerous->getByLevel()->getParent()->getInfo();
+	this->mostDangerousID = mostDangerous->getByLevel()->getIndex().id;
 }
 
 
 void Magizoologist::getAllCreaturesByLevel(int** creatures, int* numOfCreatures)
 {
 	if(this->mostDangerousID == -1){		// if no creatures
-		creatures = NULL;
+		*creatures = NULL;
 		*numOfCreatures = 0;
+		return;
 	}
+	levelKey* keys = (levelKey*)malloc(sizeof(levelKey)*creaturesByLevel->getSize());
+	this->creaturesByLevel->turnToArrays(keys, NULL);	// we don't need the creatures themselves
 	*numOfCreatures = creaturesByLevel->getSize();
-	levelKey* lks = (levelKey*)malloc(sizeof(levelKey)*(*numOfCreatures));		//TODO: malloc?
-	creaturesByLevel->turnToArrays(lks, NULL);
-	*creatures = (int*)malloc(sizeof(*creatures));		//TODO: malloc, not sure where we allocate it
-	for(int i=0; i<*numOfCreatures; i++){
-		*creatures[i] = lks[i].level;
+	if(*numOfCreatures == 0){
+		free(keys);
+		creatures = NULL;
+		return;
 	}
-	creatures = flip(creatures, numOfCreatures);
-	free(lks);
+	int* indexes = (int*)malloc(sizeof(int)*(*numOfCreatures));
+	for(int i=0; i<*numOfCreatures; i++){
+		indexes[i] = keys[i].id;	// should be public
+	}
+	flip(indexes, *numOfCreatures);
+	*creatures = indexes;
+	free(keys);
+	return;
 }
 
 void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){

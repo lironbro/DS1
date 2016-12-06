@@ -101,17 +101,20 @@ void Department::releaseCreature(int creatureID){
 		throw InvalidInputException();
 	}
 	try{
-		Creature* creature = this->creatures->find(creatureID)->getInfo();
+		AVLTree<Creature, int>* pointer = this->creatures->find(creatureID);
+		if(pointer == NULL)
+			throw CreatureIDNotFoundException();
+		Creature* creature = pointer->getInfo();
 
 		Magizoologist* magi = creature->getMagizoologist();
 		if(magi->getMostDangerous() == creature)
 			magi->updateMostDangerous();		// set most dangerous to be its parent in the level tree
-		creature->getById()->remove(creatureID);
-		creature->getByLevel()->remove(levelKey(creature->getLevel(), creatureID));
+		creature->setById(creature->getById()->remove(creatureID));
+		creature->setByLevel(creature->getByLevel()->remove(levelKey(creature->getLevel(), creatureID)));
 		// the previous two lines cause the nodes to remove themselves from the magi's trees
 		// everything other than actions on creatures should be O(1)
-		creatures->remove(creatureID);
-		creaturesByLevel->remove(levelKey(creature->getLevel(), creatureID));
+		creatures = creatures->remove(creatureID);
+		creaturesByLevel = creaturesByLevel->remove(levelKey(creature->getLevel(), creatureID));
 		delete creature;		//TODO: this is probably pointless, delete it when you have the time
 	}
 	catch(AVLTree<Creature, int>::NotFoundException*){
@@ -175,7 +178,10 @@ void Department::getMostDangerous(int magiID, int* creatureID){
 		return;
 	}
 	try{
-		Magizoologist* magi = this->magis->find(magiID)->getInfo();
+		AVLTree<Magizoologist, int>* pointer = magis->find(magiID);
+		if(pointer == NULL)
+			throw MagiIDNotFoundException();
+		Magizoologist* magi = pointer->getInfo();
 		*creatureID = magi->getMostDangerousID();
 	}
 	catch(AVLTree<Magizoologist, int>::NotFoundException*){
@@ -201,12 +207,16 @@ void Department::getAllCreaturesByLevel(int magiID, int** creatures, int* numOfC
 		for(int i=0; i<*numOfCreatures; i++){
 			indexes[i] = keys[i].id;	// should be public
 		}
-		creatures = &indexes;
+		flip(indexes, *numOfCreatures);
+		*creatures = indexes;
+		free(keys);
 		return;
 
 	}
 	try{
 		Magizoologist* magi = this->magis->find(magiID)->getInfo();
+		if(magi == NULL)
+			throw MagiIDNotFoundException();
 		magi->getAllCreaturesByLevel(creatures, numOfCreatures);
 	}
 	catch(AVLTree<Magizoologist, int>::NotFoundException*){
@@ -216,6 +226,9 @@ void Department::getAllCreaturesByLevel(int magiID, int** creatures, int* numOfC
 		throw;
 	}
 }
+
+
+
 
 
 Department::~Department(){

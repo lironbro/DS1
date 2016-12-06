@@ -279,7 +279,7 @@ public:
 
 	/*
 	 * removes the node from the tree with the given index
-	 * this functions is awful
+	 * this function is awful
 	 */
 	AVLTree* remove(S index){
 		if(this == NULL){
@@ -347,7 +347,7 @@ public:
 				//if(this->parent != NULL){
 				AVLTree* next = this->findNextInorder();
 
-				if(this->right != next){
+				if(this->right != next){		// TODO: fix other sided pointers
 					AVLTree* tmp = next->right;
 					if (this->right != NULL) this->right->parent = next;
 					if (next->right != NULL) next->right->parent = this;
@@ -366,11 +366,14 @@ public:
 				}
 				else{
 					this->right = next->right;
+					if(this->right != NULL)
+						this->right->parent = this;
 					next->right = this;
 
-					AVLTree* tmp = next->left;
 					next->left = this->left;
-					this->left = tmp;
+					if(next->left != NULL)
+						next->left->parent = next;
+					this->left = NULL;
 
 					next->parent = this->parent;
 					if(this->parent != NULL && this->parent->right == this){
@@ -381,7 +384,6 @@ public:
 					}
 					this->parent = next;
 
-					next->left->parent = next;
 				}
 				AVLTree* x =  this->remove(index); //TODO: delete x
 				return x;

@@ -242,43 +242,54 @@ bool increaseLevelTest(Department* d){
 
 bool getMostDangerousTest(Department* d){
 
+	bool flag = false;
 
 	// getMostDangerous test
 	int* dangerous = (int*)malloc(sizeof(*dangerous));		//TODO: is malloc good for this?
-	d->getMostDangerous(32, dangerous);		// dangerous should point to 500
-	d->getMostDangerous(55, dangerous);		// dangerous should point to 2
+	d->getMostDangerous(32, dangerous);		// dangerous should point to 500 (or 502 if increase lvl fails)
+	d->getMostDangerous(55, dangerous);		// dangerous should point to 2 (or 5 if increase fails)
 	d->getMostDangerous(123, dangerous);	// dangerous should point to be -1
-	d->getMostDangerous(-1000, dangerous);	// dangerous should point to 500
+	d->getMostDangerous(-1000, dangerous);	// dangerous should point to 500 (or 502 if increase fails)
 	try{
 		d->getMostDangerous(666, dangerous);		// no magi id
 
 	}
 	catch(Department::MagiIDNotFoundException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
-	try{
-		d->getMostDangerous(-666, dangerous);		// negative id
+	if(!flag)
+		return flag;
+	flag = false;
 
+	try{
+		d->getMostDangerous(0, dangerous);		// negative id
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->getMostDangerous(123, NULL);		// null pointer
 
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
 
 	return true;
 }
@@ -287,50 +298,70 @@ bool getMostDangerousTest(Department* d){
 
 bool getAllCreaturesByLevelTest(Department* d){
 
+	bool flag = false;
 
 	// getAllCreaturesByLevel test
-	int* numOfCreatures = new int;
-	int* creatureArray;						// TODO: this is annoying, maybe this is good?
-	int** creatures = &creatureArray;		// TODO: is this the way to do this? who knows?
+	int res;
+	int* numOfCreatures = &res;
+	int* arr;
+	int** creatures = &arr;		// TODO: is this the way to do this? I think creatures could be NULL
 	d->getAllCreaturesByLevel(-1, creatures, numOfCreatures); 	// should return all creatures
+	free(*creatures);		// this causes problems
 	d->getAllCreaturesByLevel(32, creatures, numOfCreatures);
+	free(*creatures);
 	d->getAllCreaturesByLevel(123, creatures, numOfCreatures);		// creatures should be NULL, num should be 0
+	free(*creatures);
 	try{
 		d->getAllCreaturesByLevel(123, NULL, numOfCreatures);
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->getAllCreaturesByLevel(123, creatures, NULL);
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->getAllCreaturesByLevel(0, creatures, numOfCreatures);
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
-		d->getAllCreaturesByLevel(666, NULL, numOfCreatures);
+		d->getAllCreaturesByLevel(666, creatures, numOfCreatures);
 	}
 	catch(Department::MagiIDNotFoundException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
 
 
 	return true;
@@ -371,24 +402,54 @@ int main(){
 		printf("passed addCreatureTest\n");
 	else
 		printf("failed addCreatureTest\n");
-
+	/*
 	flag &= releaseCreatureTest(d);
 	if(flag)
-		printf("passed addCreatureTest\n");
+		printf("passed releaseCreatureTest\n");
 	else
-		printf("failed addCreatureTest\n");
+		printf("failed releaseCreatureTest\n");
+	 */
 
-	//flag &= replaceMagizoologistTest(d);		// TODO: This one is Tal's
+	/*
+	flag &= replaceMagizoologistTest(d);		// TODO: This one is Tal's
+	if(flag)
+		printf("passed replaceMagizoologistTest\n");
+	else
+		printf("failed replaceMagizoologistTest\n");
+	 */
 
-	//flag &= increaseLevelTest(d);
+	/*
+	flag &= increaseLevelTest(d);
+	if(flag)
+		printf("passed increaseLevelTest\n");
+	else
+		printf("failed increaseLevelTest\n");
+	 */
 
-	//flag &= getMostDangerousTest(d);
 
-	//flag &= getAllCreaturesByLevelTest(d);		// TODO: add all creatures functionality
+	flag &= getMostDangerousTest(d);
+	if(flag)
+		printf("passed getMostDangerousTest\n");
+	else
+		printf("failed getMostDangerousTest\n");
+
+
+
+	flag &= getAllCreaturesByLevelTest(d);		// TODO: add all creatures functionality
+	if(flag)
+		printf("passed getAllCreaturesByLevelTest\n");
+	else
+		printf("failed getAllCreaturesByLevelTest\n");
 
 
 	// Quit test
 	delete d;
+
+
+	if(flag == true)
+		printf("looks like this works :) \n");
+	else
+		printf("doesn't work :( \n");
 
 	// gg wp ez
 

@@ -150,4 +150,14 @@ void Marge(Creature** A1,T* A2,int sizeA,Creature** B1,T* B2,int sizeB
 	}
 }
 
+
+
+static void flip(int* a, int n){
+	for(int i=0; i<n/2; i++){
+		int temp = a[i];
+		a[i] = a[n - i - 1];
+		a[n - i -1] = temp;
+	}
+}
+
 #endif /* MAGIZOOLOGIST_H_ */
