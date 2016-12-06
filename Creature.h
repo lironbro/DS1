@@ -1,7 +1,7 @@
 /*
  * Creature.h
  *
- *  Created on: 5 áãöî× 2016
+ *  Created on: 5 Ã¡Ã£Ã¶Ã®Ã— 2016
  *      Author: Liron
  */
 

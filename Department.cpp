@@ -1,7 +1,7 @@
 /*
  * Department.c
  *
- *  Created on: 5 áãöî× 2016
+ *  Created on: 5 Ã¡Ã£Ã¶Ã®Ã— 2016
  *      Author: Liron
  */
 #include "Department.h"
@@ -15,28 +15,49 @@
  * -test this ship out
  */
 
-Department::Department() : magis(), creatures(){
+Department::Department() : magis(new AVLTree<Magizoologist, int>()), creatures(new AVLTree<Creature, int>()){
 
 }
 
 
 void Department::addMagizoologist(int id){
-	magis->insert(new Magizoologist(), id);
+	try{
+		magis = magis->insert(new Magizoologist(), id);
+	}
+	catch(AVLTree<Magizoologist, int>::AlreadyExistsException&){
+		throw new MagiIDAlreadyExistsException();
+	}
 }
 
 
 void Department::addCreature(int creatureID, int magiID, int level){
-	Creature* creature = new Creature(level, NULL);
-	creatures->insert(creature, creatureID);
-	Magizoologist* magi = magis->find(magiID)->getInfo();
-	if(magi == NULL)
-	{
-		//TODO: throw exception
+	try{
+		Magizoologist* magi = this->magis->find(magiID)->getInfo();
+
+		if(magi->getCreaturesById()->find(creatureID) != NULL){
+			throw new CreatureIDAlreadyExistsException();
+		}
+
+		Creature* crea = new Creature(level,magi,NULL,NULL);
+		magi->addCreature(crea,creatureID);
+
+		AVLTree<Creature, int>* byid = magi->getCreaturesById()->find(creatureID);
+		AVLTree<Creature, levelKey>* bylevel = magi->getCreaturesByLevel()->find(new levelKey(level,creatureID));
+
+		crea->setById(byid);
+		crea->setByLevel(bylevel);
+
+		this->creatures = this->creatures->insert(crea,creatureID);
 	}
-	magi->addCreature(creature, creatureID);
-	// add the byId and byKey pointers for creature
-	creature->setById(magi->creaturesById->find(creatureID));	//TODO: check this out
-	creature->setByLevel(magi->creaturesByLevel->find(creatureID));
+	catch(AVLTree<Magizoologist, int>::NotFoundException*){
+		throw new MagiIDNotFoundException();
+	}
+	catch(AVLTree<Creature, int>::AlreadyExistsException*){
+		throw new CreatureIDAlreadyExistsException();
+	}
+	catch(...){
+		throw;
+	}
 }
 
 
@@ -51,20 +72,16 @@ void Department::replaceMagizoologist(int magiID, int replacementID){
 
 
 void Department::increaseLevel(int creatureID, int delta){
-	Creature* creature = this->creatures;
 }
 
 
 void Department::getMostDangerous(int magiID, int* creatureID){
-	Magizoologist* magi = this->magis->find(magiID)->getInfo();
+	//Magizoologist* magi = this->magis->find(magiID)->getInfo();
 
-	*(creatureID) = magi->getMostDangerous();
 }
 
 
 void Department::getAllCreaturesByLevel(int magiID, int** creatures, int* numOfCreatures){
-	Magizoologist* magi = this->magis->find(magiID);
-	magi->getAllCreaturesByLevel(creatures, numOfCreatures);
 }
 
 
@@ -72,4 +89,3 @@ Department::~Department(){
 	delete creatures;
 	delete magis;
 }
-

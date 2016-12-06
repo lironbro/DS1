@@ -1,7 +1,7 @@
 /*
  * Department.h
  *
- *  Created on: 5 áãöî× 2016
+ *  Created on: 5 Ã¡Ã£Ã¶Ã®Ã— 2016
  *      Author: Liron
  */
 
@@ -22,6 +22,11 @@ private:
 
 public:
 
+	class DepartmentException : public std::exception {};
+	class CreatureIDAlreadyExistsException: public DepartmentException {};
+	class MagiIDAlreadyExistsException: public DepartmentException {};
+	class MagiIDNotFoundException: public DepartmentException {};
+	class NullPointerException: public DepartmentException {};
 
 	Department();
 
