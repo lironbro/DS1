@@ -6,7 +6,14 @@
  */
 #include "Department.h"
 
-
+/*
+ * TODO s:
+ * -have exceptions
+ * -change functions to work properly
+ * -check that adding a creature gives it pointers to both nodes
+ * -take Tal's content and add it
+ * -test this ship out
+ */
 
 Department::Department() : magis(), creatures(){
 
