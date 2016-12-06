@@ -397,6 +397,7 @@ public:
 			return this->right->remove(index);
 
 		}
+		return NULL;
 	}
 
 

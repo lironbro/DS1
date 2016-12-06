@@ -1,7 +1,7 @@
 /*
  * Magizoologist.h
  *
- *  Created on: 5 áãöî× 2016
+ *  Created on: 5 Ã¡Ã£Ã¶Ã®Ã— 2016
  *      Author: Liron
  */
 
@@ -36,10 +36,25 @@ public:
 	void releaseCreature(int id);
 
 
-	void getMostDangerous();
+	Creature* getMostDangerous();
+
+
+	void updateMostDangerous();
+
+
+	int getMostDangerousID();
 
 
 	void getAllCreaturesByLevel(int** creatures, int* numOfCreatures);
+
+
+	void ReplaceMagizoologist(Magizoologist rep);
+
+
+	AVLTree<Creature, int>* getCreaturesById();
+
+
+	AVLTree<Creature, levelKey>* getCreaturesByLevel();
 
 
 	~Magizoologist();
@@ -99,6 +114,34 @@ public:
 
 };
 
+template<class T>
+void Marge(Creature** A1,T* A2,int sizeA,Creature** B1,T* B2,int sizeB
+		,Creature** cratures ,T* indexes)
+{
+	int iA=0,iB=0,i=0;
+	cratures = new Creature*[sizeA+sizeB];
+	indexes  = new T[sizeA+sizeB];
+	while(iA<sizeA && iB<sizeB){
+		if(A2[iA]<B2[iB]){
+			cratures[i]=A1[iA];
+			indexes[i]=A2[iA];
+			iA++;
+		}else{
+			cratures[i]=B1[iB];
+			indexes[i]=B2[iB];
+			iB++;
+		}
+		i++;
+	}
+	while(iA<sizeA) {
+		cratures[i]=A1[iA];
+		indexes[i++]=A2[iA++];
+	}
+	while(iB<sizeB) {
+		cratures[i]=B1[iB];
+		indexes[i++]=B2[iB++];
+	}
+}
+
 
 #endif /* MAGIZOOLOGIST_H_ */
-

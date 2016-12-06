@@ -1,99 +1,208 @@
 /*
  * test_BinTree.cpp
  *
- *  Created on: 27 áðåá× 2016
+ *  Created on: 27 Ã¡Ã°Ã¥Ã¡Ã— 2016
  *      Author: Liron
  */
 
-#include "AVLTree.h"
+#include "Department.h"
+
+
+/*
+ * Liron's notes to self:
+ * - are we supposed to catch exceptions by reference or by address?
+ * - add (magiID < 0) functionality to getMostDangerous
+ * - find out how to implement the arrays in getMostDangerous
+ */
+
 
 int main(){
-
-	/*
-
-	//int meaningful = ceil(log2(7));
-
-	// constructor test 	- passed
-	AVLTree<int>* tree = new AVLTree<int>();
-	int x = 3;
-	int y = 5;
-	int z = 100000;
-
-	// insert test	- passed
-	tree = tree->insert(NULL, 5);
-	tree = tree->insert(&z, 2);
-	tree = tree->insert(NULL, 1);		// if you insert 1 there should be LL rotation, if 3 then LR
-	tree = tree->insert(&x, 10);
-	tree = tree->insert(NULL, 12);
-	//tree->insert(NULL, 2);		// won't be inserted
-	tree = tree->insert(&y, 3);
-	tree = tree->insert(NULL, 7);
-	tree = tree->insert(NULL, 9);
-	tree = tree->insert(NULL, -1);
-	tree = tree->insert(NULL, 0);		// should perform LR on node of index 1
-	tree = tree->insert(NULL, 8);		// should perform RL on node of index 7
-
-	int val = -1;
-	// turnToArrays test 1	- passed
-	int* arr = (int*)malloc(tree->getSize()*sizeof(int));
-	tree->turnToArrays(arr, NULL);
-	for(int i = 0; i < tree->getSize(); i++)
-		val = arr[i];
+	// init test - passed - GREAT SUCCESS
+	Department* d= new Department();
 
 
-	// height test	- passed
-	int height = tree->getHeight();
+	// addMagizoologist test
+	d->addMagizoologist(55);
+	d->addMagizoologist(32);
+	d->addMagizoologist(123);		// this guy should be empty
+	try{
+		d->addMagizoologist(32);
+	}
+	catch(Department::MagiIDAlreadyExistsException& e){
 
-	// size test	- passed
-	int size = tree->getSize();
+	}
+	try{
+		d->addMagizoologist(-1);
+	}
+	catch(Department::InvalidInputException& e){
 
-	// find test	- passed
-	AVLTree<int>* t = tree->find(-17);
-	t = tree->find(10);
-	t = tree->find(-20);
-	t = tree->find(3);
-	t = tree->find(2);
-	t = tree->find(-20);
-
-
-
-	// remove test	- passed
-	tree->remove(5);	// root
-	tree->remove(0);	// leaf
-	tree->remove(8);	// one child
-	tree->remove(2);	// two children
-	tree->remove(2);
-	tree->remove(1);	// extras
-	tree->remove(9);
-
-	// turnToArrays test 2	- passed
-	int* arr2 = (int*)malloc(sizeof(int)*tree->getSize());
-	tree->turnToArrays(arr2, NULL);
-	for(int i = 0; i < tree->getSize(); i++)
-		val = arr[i];
-
-	// almost full tree constructor test	- passed
-	// this should work, if it won't, I'll kill myself
-	AVLTree<int>* empty1 = new AVLTree<int>(7);
-	AVLTree<int>* empty2 = new AVLTree<int>(5);
-	AVLTree<int>* empty3 = new AVLTree<int>(6);
-	AVLTree<int>* empty4 = new AVLTree<int>(4);
-
-	// fillFromArray test	- passed
-	int indexes[7] = {1, 2, 5, 10, 120, 444, 1000};
-	AVLTree<int>* treeArr1 = AVLTree<int>::fillFromArray(indexes, NULL, 7);		// info is NULL, should still work
-	AVLTree<int>* treeArr2 = AVLTree<int>::fillFromArray(indexes, NULL, 6);		// info is NULL, should still work
+	}
 
 
-	// delete test
-	delete empty2;
-	delete empty1;
-	delete tree;
+	// addCreature test
+	d->addCreature(5,55,8);
+	try{
+		d->addCreature(5,55,9);		// should throw id already exists exception
+	}
+	catch(Department::CreatureIDAlreadyExistsException& e){
+
+	}
+	d->addCreature(10,55,8);	// this shouldn't be the most dangerous
+	d->addCreature(3,55,3);
+	d->addCreature(2,55,3);		// should be more dangerous than the previous one
+	d->addCreature(1000,55,5);
+
+	d->addCreature(500,32,100);
+	d->addCreature(501,32,100);
+	d->addCreature(499,32,100);
+	d->addCreature(502,32,150);		// should be the most dangerous under 32
+	d->addCreature(503,32,20);
+	try{
+		d->addCreature(1000,32,150);
+	}
+	catch(Department::MagiIDAlreadyExistsException& e){
+
+	}
+
+	try{
+		d->addCreature(1000, 666, 1);
+	}
+	catch(Department::MagiIDNotFoundException& e){
+
+	}
+
+	try{
+		d->addCreature(-1000, 32, 1);		// negative creatureid
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->addCreature(1000, -32, 1);		// negative magiid
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->addCreature(1000, 32, 0);		// nonpositive level
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->addCreature(1000, 32, -1);		// nonpositive level
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
 
 
-	delete arr;
-	*/
-	return 0;
+
+	// releaseCreature test
+	d->releaseCreature(5);
+	try{
+		d->releaseCreature(5);
+	}
+	catch(Department::CreatureIDNotFoundException& e){
+
+	}
+	try{
+		d->releaseCreature(1337);
+	}
+	catch(Department::CreatureIDNotFoundException& e){
+
+	}
+	try{
+		d->releaseCreature(-10);			// negative id
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+
+
+	// ReplaceMagizoologist test
+
+
+	// increaseLevel test
+	d->increaseLevel(500, 100);		// now 500 should be the most dangerous under 32
+	try{
+		d->increaseLevel(-666, 100);		// negative id
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->increaseLevel(666, 100);			// no creatureid
+	}
+	catch(Department::CreatureIDNotFoundException& e){
+
+	}
+
+	// getMostDangerous test
+	int* dangerous = (int*)malloc(sizeof(*dangerous));		//TODO: is malloc good for this?
+	d->getMostDangerous(32, dangerous);		// dangerous should point to 500
+	d->getMostDangerous(55, dangerous);		// dangerous should point to 2
+	d->getMostDangerous(123, dangerous);	// dangerous should point to be -1
+	d->getMostDangerous(-1000, dangerous);	// dangerous should point to 500
+	try{
+		d->getMostDangerous(666, dangerous);		// no magi id
+
+	}
+	catch(Department::MagiIDNotFoundException& e){
+
+	}
+	try{
+		d->getMostDangerous(-666, dangerous);		// negative id
+
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->getMostDangerous(123, NULL);		// null pointer
+
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+
+
+	// getAllCreaturesByLevel test
+	int* numOfCreatures = new int;
+	int* creatureArray;						// TODO: this is annoying, maybe this is good?
+	int** creatures = &creatureArray;		// TODO: is this the way to do this? who knows?
+	d->getAllCreaturesByLevel(-1, creatures, numOfCreatures); 	// should return all creatures
+	d->getAllCreaturesByLevel(32, creatures, numOfCreatures);
+	d->getAllCreaturesByLevel(123, creatures, numOfCreatures);		// creatures should be NULL, num should be 0
+	try{
+		d->getAllCreaturesByLevel(123, NULL, numOfCreatures);
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->getAllCreaturesByLevel(123, creatures, NULL);
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->getAllCreaturesByLevel(0, creatures, numOfCreatures);
+	}
+	catch(Department::InvalidInputException& e){
+
+	}
+	try{
+		d->getAllCreaturesByLevel(666, NULL, numOfCreatures);
+	}
+	catch(Department::MagiIDNotFoundException& e){
+
+	}
+
+
+	// Quit test
+	delete d;
+
+	// gg wp ez
+
 }
-
-
