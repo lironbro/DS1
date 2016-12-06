@@ -48,7 +48,7 @@ public:
 	void getAllCreaturesByLevel(int** creatures, int* numOfCreatures);
 
 
-	void ReplaceMagizoologist(Magizoologist rep);
+	void ReplaceMagizoologist(Magizoologist* rep);
 
 
 	AVLTree<Creature, int>* getCreaturesById();

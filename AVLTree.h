@@ -610,7 +610,7 @@ public:
 	 */
 	static AVLTree<T,S>* fillFromArray(S* indexes, T** info, int n)
 																																																																			{
-		AVLTree<T,S>* res = new AVLTree<T,S>(n);			// TODO: fuck this stupid fucking language
+		AVLTree<T,S>* res = new AVLTree<T,S>(n);
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
 																																																																			}

@@ -104,11 +104,11 @@ void Magizoologist::getAllCreaturesByLevel(int** creatures, int* numOfCreatures)
 	free(lks);
 }
 
-void Magizoologist::ReplaceMagizoologist(Magizoologist rep){
+void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
 	if(this->creaturesById->getSize() == 0) return;
 
 	int thisSize = this->creaturesById->getSize(),
-			repSize = rep.creaturesById->getSize();
+			repSize = rep->creaturesById->getSize();
 	Creature** idInfo1 = new Creature*[thisSize];
 	Creature** levelInfo1 = new Creature*[thisSize];
 	int* idIndex1 = new int[thisSize];
@@ -127,30 +127,30 @@ void Magizoologist::ReplaceMagizoologist(Magizoologist rep){
 	int* idIndex2 = new int[repSize];
 	levelKey* levelIndex2 = new levelKey[repSize];
 
-	rep.creaturesById->turnToArrays(idIndex2,idInfo2);
-	rep.creaturesByLevel->turnToArrays(levelIndex2,levelInfo2);
+	rep->creaturesById->turnToArrays(idIndex2,idInfo2);
+	rep->creaturesByLevel->turnToArrays(levelIndex2,levelInfo2);
 
-	delete rep.creaturesById;
-	rep.creaturesById=NULL;
-	delete rep.creaturesByLevel;
-	rep.creaturesByLevel=NULL;
+	delete rep->creaturesById;
+	rep->creaturesById=NULL;
+	delete rep->creaturesByLevel;
+	rep->creaturesByLevel=NULL;
 
 	for(int i=0;i<thisSize;i++){
-		idInfo1[i]->setMagizoologist(&rep);
-		levelInfo1[i]->setMagizoologist(&rep);
+		idInfo1[i]->setMagizoologist(rep);
+		levelInfo1[i]->setMagizoologist(rep);
 	}
 
 	Creature** idinfo=NULL ;
 	int* idindex=NULL ;
 	Marge<int>(idInfo1,idIndex1,thisSize,idInfo2,idIndex2,repSize,&idinfo,&idindex);
 
-	rep.creaturesById = rep.creaturesById->fillFromArray(idindex,idinfo,thisSize+repSize);
+	rep->creaturesById = rep->creaturesById->fillFromArray(idindex,idinfo,thisSize+repSize);
 
 	Creature** levelinfo=NULL ;
 	levelKey* levelindex=NULL ;
 	Marge<levelKey>(levelInfo1,levelIndex1,thisSize,levelInfo2,levelIndex2,repSize,&levelinfo,&levelindex);
 
-	rep.creaturesByLevel = rep.creaturesByLevel->fillFromArray(levelindex,levelinfo,thisSize+repSize);
+	rep->creaturesByLevel = rep->creaturesByLevel->fillFromArray(levelindex,levelinfo,thisSize+repSize);
 
 	delete idInfo1;
 	delete idInfo2;

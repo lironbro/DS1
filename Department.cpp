@@ -115,7 +115,7 @@ void Department::replaceMagizoologist(int magiID, int replacementID){
 		Magizoologist* magi1 = this->magis->find(magiID)->getInfo();
 		Magizoologist* magi2 = this->magis->find(replacementID)->getInfo();
 
-		magi1->ReplaceMagizoologist(*magi2);
+		magi1->ReplaceMagizoologist(magi2);
 
 	}
 	catch(...){
