@@ -236,7 +236,7 @@ public:
 			return this;
 		}
 		if (this ->index == index){
-			throw new AlreadyExistsException();
+			throw AlreadyExistsException();
 		}
 		else if(this->index > index){
 			if(this->left == NULL ){
@@ -282,7 +282,7 @@ public:
 	 */
 	AVLTree* remove(S index){
 		if(this == NULL){
-			throw new NotFoundException();
+			throw NotFoundException();
 		}
 		else if(this->index == index){
 			if(this->left == NULL && this->right == NULL){
@@ -388,12 +388,12 @@ public:
 
 		else if(index < this->index){
 			if(this->left == NULL)
-				throw new NotFoundException();
+				throw NotFoundException();
 			return this->left->remove(index);
 		}
 		else{
 			if(this->right == NULL)
-				throw new NotFoundException();
+				throw NotFoundException();
 			return this->right->remove(index);
 
 		}
@@ -658,7 +658,7 @@ public:
 	int getBalanceFactor()
 	{
 		if(this == NULL)
-			throw new NullPointerException();
+			throw NullPointerException();
 		int lHeight = -1, rHeight = -1;
 		if(left != NULL)
 			lHeight = left->height;

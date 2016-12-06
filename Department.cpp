@@ -24,26 +24,26 @@ magis(new AVLTree<Magizoologist, int>()), creatures(new AVLTree<Creature, int>()
 
 void Department::addMagizoologist(int id){
 	if(this == NULL || id <= 0 ){
-		throw new InvalidInputException();
+		throw InvalidInputException();
 	}
 	try{
 		magis = magis->insert(new Magizoologist(), id);
 	}
-	catch(AVLTree<Magizoologist, int>::AlreadyExistsException&){
-		throw new MagiIDAlreadyExistsException();
+	catch(AVLTree<Magizoologist, int>::AlreadyExistsException& e){
+		throw MagiIDAlreadyExistsException();
 	}
 }
 
 
 void Department::addCreature(int creatureID, int magiID, int level){
 	if(this == NULL || creatureID <= 0 || magiID <= 0 || level < 0 ){
-		throw new InvalidInputException();
+		throw InvalidInputException();
 	}
 	try{
 		Magizoologist* magi = this->magis->find(magiID)->getInfo();
 
 		if(magi->getCreaturesById()->find(creatureID) != NULL){
-			throw new CreatureIDAlreadyExistsException();
+			throw CreatureIDAlreadyExistsException();
 		}
 
 		Creature* crea = new Creature(level,magi,NULL,NULL);
@@ -73,10 +73,10 @@ void Department::addCreature(int creatureID, int magiID, int level){
 
 	}
 	catch(AVLTree<Magizoologist, int>::NotFoundException*){
-		throw new MagiIDNotFoundException();
+		throw MagiIDNotFoundException();
 	}
 	catch(AVLTree<Creature, int>::AlreadyExistsException*){
-		throw new CreatureIDAlreadyExistsException();
+		throw CreatureIDAlreadyExistsException();
 	}
 	catch(...){
 		throw;
@@ -86,7 +86,7 @@ void Department::addCreature(int creatureID, int magiID, int level){
 
 void Department::releaseCreature(int creatureID){
 	if(this == NULL || creatureID <= 0){
-		throw new InvalidInputException();
+		throw InvalidInputException();
 	}
 	try{
 		Creature* creature = this->creatures->find(creatureID)->getInfo();
@@ -101,7 +101,7 @@ void Department::releaseCreature(int creatureID){
 		//delete creature;		//TODO: this is probably pointless, delete it when you have the time
 	}
 	catch(AVLTree<Creature, int>::NotFoundException*){
-		throw new CreatureIDNotFoundException();
+		throw CreatureIDNotFoundException();
 	}
 	catch(...){
 		throw;
@@ -109,6 +109,7 @@ void Department::releaseCreature(int creatureID){
 }
 
 
+// Tal's rensponsibility lol
 void Department::replaceMagizoologist(int magiID, int replacementID){
 
 }
@@ -117,7 +118,7 @@ void Department::replaceMagizoologist(int magiID, int replacementID){
 // TODO: have Tal look at this
 void Department::increaseLevel(int creatureID, int delta){
 	if(this == NULL || creatureID <= 0 || delta <= 0){
-		throw new InvalidInputException();
+		throw InvalidInputException();
 	}
 	try{
 		Creature* creature = this->creatures->find(creatureID)->getInfo();
@@ -128,7 +129,7 @@ void Department::increaseLevel(int creatureID, int delta){
 		magi->getCreaturesByLevel()->insert(creature, levelKey(creature->getLevel(), creatureID));
 	}
 	catch(AVLTree<Creature, int>::NotFoundException*){
-		throw new CreatureIDNotFoundException();
+		throw CreatureIDNotFoundException();
 	}
 	catch(...){
 		throw;
@@ -139,7 +140,7 @@ void Department::increaseLevel(int creatureID, int delta){
 // TODO: have Tal look at this
 void Department::getMostDangerous(int magiID, int* creatureID){
 	if(this == NULL || creatureID == NULL || magiID == 0){
-		throw new InvalidInputException();
+		throw InvalidInputException();
 	}
 	if(magiID < 0){
 		*creatureID = mostDangerousId;
@@ -150,7 +151,7 @@ void Department::getMostDangerous(int magiID, int* creatureID){
 		*creatureID = magi->getMostDangerousID();
 	}
 	catch(AVLTree<Magizoologist, int>::NotFoundException*){
-		throw new MagiIDNotFoundException();
+		throw MagiIDNotFoundException();
 	}
 	catch(...){
 		throw;
@@ -158,18 +159,18 @@ void Department::getMostDangerous(int magiID, int* creatureID){
 }
 
 
-// TODO: have Tal look at this
+// TODO: have Tal look at this, maybe make it his responsibility?
 // TODO: add code for when magiID < 0, should return all creatures
 void Department::getAllCreaturesByLevel(int magiID, int** creatures, int* numOfCreatures){
 	if(this == NULL || magiID == 0 || creatures == NULL || numOfCreatures == NULL){
-		throw new InvalidInputException();
+		throw InvalidInputException();
 	}
 	try{
 		Magizoologist* magi = this->magis->find(magiID)->getInfo();
 		magi->getAllCreaturesByLevel(creatures, numOfCreatures);
 	}
 	catch(AVLTree<Magizoologist, int>::NotFoundException*){
-		throw new MagiIDNotFoundException();
+		throw MagiIDNotFoundException();
 	}
 	catch(...){
 		throw;

@@ -8,28 +8,21 @@
 #include "Department.h"
 
 
-/*
- * Liron's notes to self:
- * - are we supposed to catch exceptions by reference or by address?
- * - add (magiID < 0) functionality to getMostDangerous
- * - find out how to implement the arrays in getMostDangerous
- */
-
-
-int main(){
-	// init test - passed - GREAT SUCCESS
-	Department* d= new Department();
+bool addMagizoologistTest(Department* d){
 
 
 	// addMagizoologist test
 	d->addMagizoologist(55);
 	d->addMagizoologist(32);
-	d->addMagizoologist(123);		// this guy should be empty
+	d->addMagizoologist(123);		// this guy should be empty the entire test
 	try{
 		d->addMagizoologist(32);
 	}
 	catch(Department::MagiIDAlreadyExistsException& e){
 
+	}
+	catch(...){
+		return false;
 	}
 	try{
 		d->addMagizoologist(-1);
@@ -37,7 +30,15 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 
+	return true;
+}
+
+
+bool addCreatureTest(Department* d){
 
 	// addCreature test
 	d->addCreature(5,55,8);
@@ -46,6 +47,9 @@ int main(){
 	}
 	catch(Department::CreatureIDAlreadyExistsException& e){
 
+	}
+	catch(...){
+		return false;
 	}
 	d->addCreature(10,55,8);	// this shouldn't be the most dangerous
 	d->addCreature(3,55,3);
@@ -63,19 +67,26 @@ int main(){
 	catch(Department::MagiIDAlreadyExistsException& e){
 
 	}
-
+	catch(...){
+		return false;
+	}
 	try{
 		d->addCreature(1000, 666, 1);
 	}
 	catch(Department::MagiIDNotFoundException& e){
 
 	}
-
+	catch(...){
+		return false;
+	}
 	try{
 		d->addCreature(-1000, 32, 1);		// negative creatureid
 	}
 	catch(Department::InvalidInputException& e){
 
+	}
+	catch(...){
+		return false;
 	}
 	try{
 		d->addCreature(1000, -32, 1);		// negative magiid
@@ -83,11 +94,17 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 	try{
 		d->addCreature(1000, 32, 0);		// nonpositive level
 	}
 	catch(Department::InvalidInputException& e){
 
+	}
+	catch(...){
+		return false;
 	}
 	try{
 		d->addCreature(1000, 32, -1);		// nonpositive level
@@ -95,6 +112,17 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
+
+
+
+	return true;
+}
+
+
+bool releaseCreatureTest(Department* d){
 
 
 
@@ -106,11 +134,17 @@ int main(){
 	catch(Department::CreatureIDNotFoundException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 	try{
 		d->releaseCreature(1337);
 	}
 	catch(Department::CreatureIDNotFoundException& e){
 
+	}
+	catch(...){
+		return false;
 	}
 	try{
 		d->releaseCreature(-10);			// negative id
@@ -118,9 +152,25 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 
+	return true;
+}
+
+
+bool replaceMagizoologistTest(Department* d){
 
 	// ReplaceMagizoologist test
+
+
+	return true;
+}
+
+
+
+bool increaseLevelTest(Department* d){
 
 
 	// increaseLevel test
@@ -131,12 +181,27 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 	try{
 		d->increaseLevel(666, 100);			// no creatureid
 	}
 	catch(Department::CreatureIDNotFoundException& e){
 
 	}
+	catch(...){
+		return false;
+	}
+
+
+	return true;
+}
+
+
+
+bool getMostDangerousTest(Department* d){
+
 
 	// getMostDangerous test
 	int* dangerous = (int*)malloc(sizeof(*dangerous));		//TODO: is malloc good for this?
@@ -151,12 +216,18 @@ int main(){
 	catch(Department::MagiIDNotFoundException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 	try{
 		d->getMostDangerous(-666, dangerous);		// negative id
 
 	}
 	catch(Department::InvalidInputException& e){
 
+	}
+	catch(...){
+		return false;
 	}
 	try{
 		d->getMostDangerous(123, NULL);		// null pointer
@@ -165,6 +236,16 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool getAllCreaturesByLevelTest(Department* d){
 
 
 	// getAllCreaturesByLevel test
@@ -180,11 +261,17 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 	try{
 		d->getAllCreaturesByLevel(123, creatures, NULL);
 	}
 	catch(Department::InvalidInputException& e){
 
+	}
+	catch(...){
+		return false;
 	}
 	try{
 		d->getAllCreaturesByLevel(0, creatures, numOfCreatures);
@@ -192,12 +279,53 @@ int main(){
 	catch(Department::InvalidInputException& e){
 
 	}
+	catch(...){
+		return false;
+	}
 	try{
 		d->getAllCreaturesByLevel(666, NULL, numOfCreatures);
 	}
 	catch(Department::MagiIDNotFoundException& e){
 
 	}
+	catch(...){
+		return false;
+	}
+
+
+	return true;
+}
+
+/*
+ * Liron's notes to self:
+ * - are we supposed to catch exceptions by reference or by address?
+ * - add (magiID < 0) functionality to getMostDangerous
+ * - find out how to implement the arrays in getMostDangerous
+ * - I split the test up into functions because I won't be performing some right away
+ * 		all test should be fine, other than replaceMagi and getAllCreatures
+ */
+
+
+int main(){
+	// init test - passed - GREAT SUCCESS
+	Department* d = new Department();
+
+
+	bool flag = true;		// to be fair, this is pointless other than making me feel good about myself
+
+	flag &= addMagizoologistTest(d);		// passed
+
+	flag &= addCreatureTest(d);
+
+	flag &= releaseCreatureTest(d);
+
+	//flag &= replaceMagizoologistTest(d);		// TODO: This one is Tal's
+
+	flag &= increaseLevelTest(d);
+
+	flag &= getMostDangerousTest(d);
+
+	//flag &= getAllCreaturesByLevelTest(d);		// TODO: add all creatures functionality
 
 
 	// Quit test
