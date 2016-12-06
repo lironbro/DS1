@@ -78,6 +78,9 @@ public:
 	}
 
 	bool operator==(levelKey key){
+		if(this == NULL){		// if this happens, something got messed up
+			return false;
+		}
 		return this->level == key.level && this->id == key.id;
 	}
 
@@ -88,7 +91,7 @@ public:
 	bool operator<=(levelKey key){
 		if(this->level < key.level)
 			return true;
-		if(this->id >= key.id)
+		if(this->level == key.level && this->id > key.id)
 			return true;
 		return false;
 	}

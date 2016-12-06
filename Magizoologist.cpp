@@ -17,10 +17,14 @@ Magizoologist::Magizoologist(){
 }
 
 AVLTree<Creature, int>* Magizoologist::getCreaturesById(){
+	if(this == NULL)
+		return NULL;
 	return this->creaturesById;
 }
 
 AVLTree<Creature, levelKey>* Magizoologist::getCreaturesByLevel(){
+	if(this == NULL)
+		return NULL;
 	return this->creaturesByLevel;
 }
 
@@ -35,8 +39,8 @@ void Magizoologist::addCreature(Creature* creature, int id){
 		mostDangerous = creature;
 		mostDangerousID = id;
 	}
-	else if(creature->getLevel() >= this->mostDangerous->getLevel() &&
-			this->mostDangerousID >= id){
+	else if(creature->getLevel() > this->mostDangerous->getLevel() ||
+			(creature->getLevel() == this->mostDangerous->getLevel() && this->mostDangerousID >= id)){
 		this->mostDangerous = creature;
 		mostDangerousID = id;
 	}
@@ -69,11 +73,15 @@ static int** flip(int** creatures, int* numOfCreatures){
 
 
 Creature* Magizoologist::getMostDangerous(){
+	if(this == NULL)
+		return NULL;
 	return this->mostDangerous;
 }
 
 
 int Magizoologist::getMostDangerousID(){
+	if(this == NULL)
+		return -1;
 	return this->mostDangerousID;
 }
 
@@ -83,6 +91,8 @@ int Magizoologist::getMostDangerousID(){
  * current most dangerous
  */
 void Magizoologist::updateMostDangerous(){
+	if(this == NULL)
+		return ;
 	this->mostDangerous = mostDangerous->getByLevel()->getParent()->getInfo();
 }
 
@@ -170,6 +180,10 @@ void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
 
 
 Magizoologist::~Magizoologist(){
-	delete creaturesByLevel;
-	delete creaturesById;
+	if(this == NULL)
+		return;
+	if(creaturesByLevel != NULL)
+		delete creaturesByLevel;
+	if(creaturesById != NULL)
+		delete creaturesById;
 }

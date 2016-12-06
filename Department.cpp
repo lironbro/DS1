@@ -45,12 +45,20 @@ void Department::addCreature(int creatureID, int magiID, int level){
 	}
 	try{
 		Magizoologist* magi = this->magis->find(magiID)->getInfo();
+		if(magi == NULL)
+			throw MagiIDNotFoundException();
 
-		if(magi->getCreaturesById()->find(creatureID) != NULL){
+
+		AVLTree<Creature, int>* temp1 = magi->getCreaturesById()->find(creatureID);
+		AVLTree<Creature, int>* temp2 = creatures->find(creatureID);
+		if(temp1 != NULL || temp2 != NULL){
 			throw CreatureIDAlreadyExistsException();
 		}
 
+
 		Creature* crea = new Creature(level,magi,NULL,NULL);
+		this->creatures = this->creatures->insert(crea,creatureID);
+		this->creaturesByLevel = this->creaturesByLevel->insert(crea, levelKey(level, creatureID));
 		magi->addCreature(crea,creatureID);
 
 		AVLTree<Creature, int>* byid = magi->getCreaturesById()->find(creatureID);
@@ -59,8 +67,7 @@ void Department::addCreature(int creatureID, int magiID, int level){
 		crea->setById(byid);
 		crea->setByLevel(bylevel);
 
-		this->creatures = this->creatures->insert(crea,creatureID);
-		this->creaturesByLevel = this->creaturesByLevel->insert(crea, levelKey(level, creatureID));
+
 
 		// update most dangerous creature
 		if(mostDangerousId == -1){
@@ -95,6 +102,7 @@ void Department::releaseCreature(int creatureID){
 	}
 	try{
 		Creature* creature = this->creatures->find(creatureID)->getInfo();
+
 		Magizoologist* magi = creature->getMagizoologist();
 		if(magi->getMostDangerous() == creature)
 			magi->updateMostDangerous();		// set most dangerous to be its parent in the level tree

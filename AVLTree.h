@@ -279,6 +279,7 @@ public:
 
 	/*
 	 * removes the node from the tree with the given index
+	 * this functions is awful
 	 */
 	AVLTree* remove(S index){
 		if(this == NULL){
@@ -372,10 +373,11 @@ public:
 					this->left = tmp;
 
 					next->parent = this->parent;
-					if(this->parent->right == this){
+					if(this->parent != NULL && this->parent->right == this){
 						this->parent->right = next;
 					}else{
-						this->parent->left = next;
+						if(this->parent != NULL )
+							this->parent->left = next;
 					}
 					this->parent = next;
 
@@ -609,11 +611,11 @@ public:
 	 * which will consist of index-info nodes as in the given arrays
 	 */
 	static AVLTree<T,S>* fillFromArray(S* indexes, T** info, int n)
-																																																																			{
+																																																																							{
 		AVLTree<T,S>* res = new AVLTree<T,S>(n);
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
-																																																																			}
+																																																																							}
 
 
 	/*
@@ -630,6 +632,9 @@ public:
 	 */
 	int getSize()
 	{
+		if(this == NULL){		// if this happens, something got messed up
+			return -666;
+		}
 		return this->size;
 	}
 
@@ -639,11 +644,22 @@ public:
 	 */
 	int getHeight()
 	{
+		if(this == NULL){		// if this happens, something got messed up
+			return -666;
+		}
 		return this->height;
 	}
 
-	T* getInfo(){
+	T* getInfo()
+	{
+		if(this == NULL){		// if this happens, something got messed up
+			return NULL;
+		}
 		return this->info;
+	}
+
+	S getIndex(){
+		return this->index;
 	}
 
 

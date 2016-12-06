@@ -1,38 +1,46 @@
 /*
  * test_BinTree.cpp
  *
- *  Created on: 27 áðåá× 2016
+ *  Created on: 27 ֳ¡ֳ°ֳ¥ֳ¡ֳ— 2016
  *      Author: Liron
  */
 
 #include "Department.h"
-
+#include "stdio.h"
 
 bool addMagizoologistTest(Department* d){
 
+	bool flag = false;
 
 	// addMagizoologist test
 	d->addMagizoologist(55);
 	d->addMagizoologist(32);
 	d->addMagizoologist(123);		// this guy should be empty the entire test
+
 	try{
 		d->addMagizoologist(32);
 	}
 	catch(Department::MagiIDAlreadyExistsException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->addMagizoologist(-1);
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
 
 	return true;
 }
@@ -40,81 +48,102 @@ bool addMagizoologistTest(Department* d){
 
 bool addCreatureTest(Department* d){
 
+	bool flag = false;
+
 	// addCreature test
 	d->addCreature(5,55,8);		// should be initial most dangerous
+
 	try{
 		d->addCreature(5,55,9);		// should throw id already exists exception
 	}
 	catch(Department::CreatureIDAlreadyExistsException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	d->addCreature(10,55,8);	// this shouldn't be the most dangerous
 	d->addCreature(3,55,3);
 	d->addCreature(2,55,3);		// should be more dangerous than the previous line
 	d->addCreature(1000,55,5);
+
 
 	d->addCreature(500,32,100);
 	d->addCreature(501,32,100);
 	d->addCreature(499,32,100);
 	d->addCreature(502,32,150);		// should be the most dangerous under 32
 	d->addCreature(503,32,20);
+
+
+
 	try{
 		d->addCreature(1000,32,150);
 	}
-	catch(Department::MagiIDAlreadyExistsException& e){
-
+	catch(Department::CreatureIDAlreadyExistsException& e){
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
-		d->addCreature(1000, 666, 1);
+		d->addCreature(1001, 666, 1);
 	}
 	catch(Department::MagiIDNotFoundException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->addCreature(-1000, 32, 1);		// negative creatureid
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->addCreature(1000, -32, 1);		// negative magiid
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
-	try{
-		d->addCreature(1000, 32, 0);		// nonpositive level
-	}
-	catch(Department::InvalidInputException& e){
+	if(!flag)
+		return flag;
+	flag = false;
 
-	}
-	catch(...){
-		return false;
-	}
 	try{
 		d->addCreature(1000, 32, -1);		// nonpositive level
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+
 
 
 
@@ -124,37 +153,48 @@ bool addCreatureTest(Department* d){
 
 bool releaseCreatureTest(Department* d){
 
-
+	bool flag = false;
 
 	// releaseCreature test
-	d->releaseCreature(5);
+	d->releaseCreature(5);			// should remove this one, most dangerous in 55 magi
 	try{
 		d->releaseCreature(5);
 	}
 	catch(Department::CreatureIDNotFoundException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->releaseCreature(1337);
 	}
 	catch(Department::CreatureIDNotFoundException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
+
 	try{
 		d->releaseCreature(-10);			// negative id
 	}
 	catch(Department::InvalidInputException& e){
-
+		flag = true;
 	}
 	catch(...){
 		return false;
 	}
+	if(!flag)
+		return flag;
+	flag = false;
 
 	return true;
 }
@@ -315,17 +355,34 @@ int main(){
 
 	bool flag = true;		// to be fair, this is pointless other than making me feel good about myself
 
+
+
+	if(flag){
+		printf("starting tests\n");
+	}
 	flag &= addMagizoologistTest(d);		// passed
+	if(flag)
+		printf("passed addMagizoologistTest\n");
+	else
+		printf("failed addMagizoologistTest\n");
 
 	flag &= addCreatureTest(d);
+	if(flag)
+		printf("passed addCreatureTest\n");
+	else
+		printf("failed addCreatureTest\n");
 
 	flag &= releaseCreatureTest(d);
+	if(flag)
+		printf("passed addCreatureTest\n");
+	else
+		printf("failed addCreatureTest\n");
 
 	//flag &= replaceMagizoologistTest(d);		// TODO: This one is Tal's
 
-	flag &= increaseLevelTest(d);
+	//flag &= increaseLevelTest(d);
 
-	flag &= getMostDangerousTest(d);
+	//flag &= getMostDangerousTest(d);
 
 	//flag &= getAllCreaturesByLevelTest(d);		// TODO: add all creatures functionality
 
