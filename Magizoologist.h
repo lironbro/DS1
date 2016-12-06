@@ -114,6 +114,10 @@ public:
 
 };
 
+
+
+
+
 template<class T>
 void Marge(Creature** A1,T* A2,int sizeA,Creature** B1,T* B2,int sizeB
 		,Creature*** cratures ,T** indexes)

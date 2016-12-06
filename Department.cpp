@@ -13,11 +13,12 @@
  * -check that adding a creature gives it pointers to both nodes
  * -take Tal's content and add it
  * -test this ship out
+ * - TODO: add tests for bad aloc
  */
 
 Department::Department() :
 magis(new AVLTree<Magizoologist, int>()), creatures(new AVLTree<Creature, int>()),
-		mostDangerous(NULL), mostDangerousId(-1){
+creaturesByLevel(new AVLTree<Creature, levelKey>()), mostDangerous(NULL), mostDangerousId(-1){
 
 }
 
@@ -31,6 +32,9 @@ void Department::addMagizoologist(int id){
 	}
 	catch(AVLTree<Magizoologist, int>::AlreadyExistsException& e){
 		throw MagiIDAlreadyExistsException();
+	}
+	catch(...){
+		throw;
 	}
 }
 
@@ -56,6 +60,7 @@ void Department::addCreature(int creatureID, int magiID, int level){
 		crea->setByLevel(bylevel);
 
 		this->creatures = this->creatures->insert(crea,creatureID);
+		this->creaturesByLevel = this->creaturesByLevel->insert(crea, levelKey(level, creatureID));
 
 		// update most dangerous creature
 		if(mostDangerousId == -1){
@@ -98,7 +103,8 @@ void Department::releaseCreature(int creatureID){
 		// the previous two lines cause the nodes to remove themselves from the magi's trees
 		// everything other than actions on creatures should be O(1)
 		creatures->remove(creatureID);
-		//delete creature;		//TODO: this is probably pointless, delete it when you have the time
+		creaturesByLevel->remove(levelKey(creature->getLevel(), creatureID));
+		delete creature;		//TODO: this is probably pointless, delete it when you have the time
 	}
 	catch(AVLTree<Creature, int>::NotFoundException*){
 		throw CreatureIDNotFoundException();
@@ -109,13 +115,18 @@ void Department::releaseCreature(int creatureID){
 }
 
 
-// Tal's rensponsibility lol
 void Department::replaceMagizoologist(int magiID, int replacementID){
+	if(magiID<=0 || this == NULL || replacementID<=0 || magiID == replacementID){
+		throw InvalidInputException();
+	}
 	try{
 		Magizoologist* magi1 = this->magis->find(magiID)->getInfo();
 		Magizoologist* magi2 = this->magis->find(replacementID)->getInfo();
 
 		magi1->ReplaceMagizoologist(magi2);
+
+		this->magis->remove(magiID);
+		delete magi1;
 
 	}
 	catch(...){
@@ -173,6 +184,18 @@ void Department::getMostDangerous(int magiID, int* creatureID){
 void Department::getAllCreaturesByLevel(int magiID, int** creatures, int* numOfCreatures){
 	if(this == NULL || magiID == 0 || creatures == NULL || numOfCreatures == NULL){
 		throw InvalidInputException();
+	}
+	if(magiID < 0){		// should be all creatures ordered by level and id
+		levelKey* keys = (levelKey*)malloc(sizeof(levelKey)*creaturesByLevel->getSize());
+		this->creaturesByLevel->turnToArrays(keys, NULL);	// we don't need the creatures themselves
+		*numOfCreatures = creaturesByLevel->getSize();
+		int* indexes = (int*)malloc(sizeof(int)*(*numOfCreatures));
+		for(int i=0; i<*numOfCreatures; i++){
+			indexes[i] = keys[i].id;	// should be public
+		}
+		creatures = &indexes;
+		return;
+
 	}
 	try{
 		Magizoologist* magi = this->magis->find(magiID)->getInfo();

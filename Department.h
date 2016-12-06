@@ -18,6 +18,7 @@ class Department{
 private:
 	AVLTree<Magizoologist, int>* magis;
 	AVLTree<Creature, int>* creatures;
+	AVLTree<Creature, levelKey>* creaturesByLevel;
 	Creature* mostDangerous;
 	int mostDangerousId;
 
