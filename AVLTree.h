@@ -93,7 +93,7 @@ private:
 	 * helps with turning the avl tree into an index and info array
 	 */
 	void aux_turnToArrays(S* indexes ,T** info, int i){
-		if (this == NULL || size == 0 || indexes == NULL || info == NULL){
+		if (this == NULL || size == 0 || indexes == NULL){
 			return;
 		}
 		if(left != NULL){
@@ -757,8 +757,10 @@ public:
 		if(this == NULL){
 			return;
 		}
-		right->QuitALL();
-		left->QuitALL();
+		if(right != NULL)
+			right->QuitALL();
+		if(left != NULL)
+			left->QuitALL();
 		delete info;
 		delete this;
 	}
@@ -768,8 +770,10 @@ public:
 		if(this == NULL){
 			return;
 		}
-		right->Quit();
-		left->Quit();
+		if(right != NULL)
+			right->Quit();
+		if(left != NULL)
+			left->Quit();
 		delete this;
 	}
 

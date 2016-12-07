@@ -45,10 +45,16 @@ public:
 	Creature* getMostDangerous();
 
 
+	void setMostDangerous(Creature* creature);
+
+
 	void updateMostDangerous();
 
 
 	int getMostDangerousID();
+
+
+	void setMostDangerousID(int id);
 
 
 	void getAllCreaturesByLevel(int** creatures, int* numOfCreatures);

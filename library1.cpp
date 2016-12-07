@@ -121,12 +121,17 @@ StatusType GetMostDangerous(void *DS, int magiID, int *creatureID){
 		((Department*)DS)->getMostDangerous(magiID,creatureID);
 		return SUCCESS;
 	}
+	catch(Department::MagiIDNotFoundException&){
+		return FAILURE;
+
+	}
 	catch(Department::InvalidInputException&){
 		return INVALID_INPUT;
 	}
 	catch(std::bad_alloc&){
 		return ALLOCATION_ERROR;
 	}
+
 }
 
 StatusType GetAllCreaturesByLevel(void *DS, int magiID, int **creatures, int *numOfCreatures){
@@ -146,7 +151,8 @@ StatusType GetAllCreaturesByLevel(void *DS, int magiID, int **creatures, int *nu
 }
 
 void Quit(void** DS){
-
+	delete *((Department**)DS);
+	*DS=NULL;
 }
 
 

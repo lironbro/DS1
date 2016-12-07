@@ -160,7 +160,16 @@ void Department::increaseLevel(int creatureID, int delta){
 		Magizoologist* magi = creature->getMagizoologist();
 		magi->creaturesByLevel = magi->creaturesByLevel->remove(levelKey(creature->getLevel(),creatureID));
 		creature->increaseLevel(delta);
-		magi->creaturesByLevel = magi->creaturesByLevel->insert(creature, levelKey(creature->getLevel(), creatureID));
+		levelKey lk = levelKey(creature->getLevel(), creatureID);
+		magi->creaturesByLevel = magi->creaturesByLevel->insert(creature, lk);
+		if(magi->getMostDangerous()->getByLevel()->getIndex() < lk){
+			magi->setMostDangerousID(creatureID);
+			magi->setMostDangerous(creature);
+		}
+		if(this->mostDangerous->getByLevel()->getIndex() < lk){
+			this->mostDangerous = creature;
+			this->mostDangerousId = creatureID;
+		}
 	}
 	catch(AVLTree<Creature, int>::NotFoundException&){
 		throw CreatureIDNotFoundException();
@@ -200,12 +209,17 @@ void Department::getAllCreaturesByLevel(int magiID, int** creatures, int* numOfC
 		throw InvalidInputException();
 	}
 	if(magiID < 0){		// should be all creatures ordered by level and id
-		levelKey* keys = (levelKey*)malloc(sizeof(levelKey)*creaturesByLevel->getSize());
+		levelKey* keys = new levelKey[creaturesByLevel->getSize()];
 		if(keys == NULL){
 			throw AllocationErrorException();
 		}
 		this->creaturesByLevel->turnToArrays(keys, NULL);	// we don't need the creatures themselves
 		*numOfCreatures = creaturesByLevel->getSize();
+		if(*numOfCreatures == 0){
+			delete keys;
+			*creatures = NULL;
+			return;
+		}
 		int* indexes = (int*)malloc(sizeof(int)*(*numOfCreatures));
 		if(indexes == NULL){
 			free(keys);
@@ -216,7 +230,7 @@ void Department::getAllCreaturesByLevel(int magiID, int** creatures, int* numOfC
 		}
 		flip(indexes, *numOfCreatures);
 		*creatures = indexes;
-		free(keys);
+		delete keys;
 		return;
 
 	}
@@ -263,7 +277,7 @@ Magizoologist* Department::getMagi(int id){
 
 
 Department::~Department(){
-	creatures->Quit();
+	this->creatures->Quit();
 	magis->QuitALL();
 	creaturesByLevel->QuitALL();
 }

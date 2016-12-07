@@ -502,17 +502,54 @@ bool getAllCreaturesByLevelTest(Department* d){
 	return true;
 }
 
-/*
- * Liron's notes to self:
- * - are we supposed to catch exceptions by reference or by address?
- * - add (magiID < 0) functionality to getMostDangerous
- * - find out how to implement the arrays in getMostDangerous
- * - I split the test up into functions because I won't be performing some right away
- * 		all test should be fine, other than replaceMagi and getAllCreatures
- */
+
+bool courseTests(Department* q){
+	q->addMagizoologist(1);
+	q->addCreature(1,1,4);
+	try{
+		q->addCreature(2,2,4);
+	}
+	catch(Department::MagiIDNotFoundException& e){
+
+	}
+	q->addMagizoologist(2);
+	try{
+		q->addMagizoologist(2);
+	}
+	catch(Department::MagiIDAlreadyExistsException& e){
+
+	}
+	q->addCreature(2,2,4);
+	q->replaceMagizoologist(1,2);
+
+	int creature = -666;
+	q->getMostDangerous(2, &creature);
+	q->increaseLevel(1,5);
+	q->getMostDangerous(2, &creature);
+	q->releaseCreature(2);
+
+	int num = -1;
+	int* creatures;
+	q->getAllCreaturesByLevel(-1, &creatures, &num);
+
+	return true;
+
+	/*
+	AddCreature 2 2 4
+	AddMagizoologist 2
+	AddMagizoologist 2
+	AddCreature 2 2 4
+	ReplaceMagizoologist 1 2
+	GetMostDangerous 2
+	IncreaseLevel 1 5
+	GetMostDangerous 2
+	ReleaseCreature 2
+	GetAllCreaturesByLevel -1
+	*/
+}
 
 
-int mainTEEST(){
+int main1(){
 
 
 	// init test - passed - GREAT SUCCESS
@@ -579,6 +616,11 @@ int mainTEEST(){
 
 	// Quit test
 	delete d;
+
+	Department* q = new Department();
+
+	flag &= courseTests(q);
+
 
 
 	if(flag == true)

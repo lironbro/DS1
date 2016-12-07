@@ -69,10 +69,25 @@ Creature* Magizoologist::getMostDangerous(){
 }
 
 
+void Magizoologist::setMostDangerous(Creature* creature){
+	if(creature == NULL || this == NULL)
+		return;
+	this->mostDangerous = creature;
+}
+
+
+
 int Magizoologist::getMostDangerousID(){
 	if(this == NULL)
 		return -1;
 	return this->mostDangerousID;
+}
+
+
+void Magizoologist::setMostDangerousID(int id){
+	if(this == NULL || id <= 0)
+		return ;
+	this->mostDangerousID = id;
 }
 
 
