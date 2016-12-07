@@ -1,10 +1,3 @@
-/*
- * AVLTree.h
- *
- *  Created on: 4 áãöî 2016
- *      Author: user
- */
-
 #ifndef AVLTREE_H_
 #define AVLTREE_H_
 
@@ -143,8 +136,7 @@ public:
 
 
 	~AVLTree(){
-		if(right != NULL) delete right;
-		if(left != NULL) delete left;
+
 	}
 
 	/*
@@ -236,7 +228,7 @@ public:
 			return this;
 		}
 		if (this ->index == index){
-			throw new AlreadyExistsException();
+			throw AlreadyExistsException();
 		}
 		else if(this->index > index){
 			if(this->left == NULL ){
@@ -282,120 +274,178 @@ public:
 	 */
 	AVLTree* remove(S index){
 		if(this == NULL){
-			throw new NotFoundException();
+			throw NotFoundException();
 		}
 		else if(this->index == index){
-			if(this->left == NULL && this->right == NULL){
-				if(this->parent != NULL){
-					if(this == this->parent->left) this->parent->left = NULL;
-					else
-						this->parent->right = NULL;
-
-					AVLTree* tmp = this->parent;
+			if(left == NULL && right == NULL){
+				if(parent != NULL){
+					if(parent->left == this) parent->left = NULL;
+					else parent->right = NULL;
+					AVLTree* p = this->parent;
 					delete this;
-					tmp->updateHeight();
-					tmp->updateSize();
-					AVLTree* y = tmp->fixBalanceFactorRemove();
-					return y;
+					p->updateHeight();
+					p->updateSize();
+					return p->fixBalanceFactorRemove();
 				}
 				else{
-					delete this->info;
-					this->size = 0;
-					this->height = -1;
+					info = NULL;
+					index = -1;
+					size=0;
+					height=0;
 					return this;
 				}
+
 			}
-			else if(this->left == NULL && this->right != NULL){
-				if(this->parent != NULL){
-					if(this == this->parent->left) this->parent->left = this->right;
-					else this->parent->right = this->right;
+			else if(left == NULL && right != NULL){
+				if(parent != NULL){
+					if(parent->left == this) parent->left = this->right;
+					else parent->right = this->right;
 
 					this->right->parent = this->parent;
-					AVLTree* tmp = this->parent;
+
+					AVLTree* p = this->parent;
 					delete this;
-					tmp->updateHeight();
-					tmp->updateSize();
-					return tmp->fixBalanceFactorRemove();
+					p->updateHeight();
+					p->updateSize();
+					p = p->fixBalanceFactorRemove();
+					return p;
 				}
 				else{
-					AVLTree* tmp = this->right;
+					this->right->parent = NULL;
+					AVLTree* p = this->right;
 					delete this;
-					return tmp;
+					p->updateHeight();
+					p->updateSize();
+					return p->fixBalanceFactorRemove();
 				}
 			}
-			else if(this->left != NULL && this->right == NULL){
-				if(this->parent != NULL){
-					if(this == this->parent->left) this->parent->left = this->left;
-					else
-						this->parent->right = this->left;
+			else if(left != NULL && right == NULL){
+				if(parent != NULL){
+					if(parent->left == this) parent->left = this->left;
+					else parent->right = this->left;
 
 					this->left->parent = this->parent;
-					AVLTree* tmp = this->parent;
+
+					AVLTree* p = this->parent;
 					delete this;
-					tmp->updateHeight();
-					tmp->updateSize();
-					return tmp->fixBalanceFactorRemove();
+					p->updateHeight();
+					p->updateSize();
+					return p->fixBalanceFactorRemove();
 				}
 				else{
-					AVLTree* tmp = this->left;
+					this->left->parent = NULL;
+					AVLTree* p = this->left;
 					delete this;
-					return tmp;
+					p->updateHeight();
+					p->updateSize();
+					return p->fixBalanceFactorRemove();
 				}
 			}
-			else if(this->left != NULL && this->right != NULL){
-				//if(this->parent != NULL){
-				AVLTree* next = this->findNextInorder();
 
-				if(this->right != next){
-					AVLTree* tmp = next->right;
-					if (this->right != NULL) this->right->parent = next;
-					if (next->right != NULL) next->right->parent = this;
-					next->right = this->right;
-					this->right = tmp;
+			else if(left != NULL && right != NULL){
+				if(parent != NULL){
+					AVLTree* next = this->findNextInorder();
+					if(next == this->right){
+						next->parent = this->parent;
+						if(this->parent->left == this) this->parent->left = next;
+						else this->parent->right = next;
 
-					tmp = next->left;
-					if (this->left != NULL) this->left->parent = next;
-					if (next->left != NULL) next->left->parent = this;
-					next->left = this->left;
-					this->left = tmp;
+						this->right = next->right;
+						if(this->right != NULL)
+							this->right->parent = this;
 
-					tmp = next->parent;
-					next->parent = this->parent;
-					this->parent = tmp;
-				}
-				else{
-					this->right = next->right;
-					next->right = this;
+						next->left = this->left;
+						if(this->left != NULL)
+							next->left->parent = next;
+						this->left = NULL;
 
-					AVLTree* tmp = next->left;
-					next->left = this->left;
-					this->left = tmp;
+						next->right = this;
+						this->parent = next;
 
-					next->parent = this->parent;
-					if(this->parent->right == this){
-						this->parent->right = next;
+						AVLTree* x = this->remove(index);
+						return x->parent==NULL ? x:x->parent;
 					}else{
-						this->parent->left = next;
+						AVLTree* p = next->parent;
+						next->parent = this->parent;
+						if(this->parent->left == this) this->parent->left = next;
+						else this->parent->right = next;
+						this->parent = p;
+						if(p->left == next) p->left = this;
+						else p->right = this;
+
+						next->left = this->left;
+						if(this->left != NULL)
+							this->left->parent = next;
+						this->left = NULL;
+
+						p = this->right;
+						this->right = next->right;
+						if(next->right != NULL)
+							next->right->parent = this;
+
+						next->right = p;
+						p->parent = next;
+
+						AVLTree* x = this->remove(index);
+						return x->parent==NULL ? x:x->parent;
 					}
-					this->parent = next;
 
-					next->left->parent = next;
 				}
-				AVLTree* x =  this->remove(index); //TODO: delete x
-				return x;
+				else{
+					AVLTree* next = this->findNextInorder();
+					if(next == this->right){
+						next->parent = NULL;
+
+						this->right = next->right;
+						if(this->right != NULL)
+							this->right->parent = this;
+
+						next->left = this->left;
+						if(this->left != NULL)
+							next->left->parent = next;
+						this->left = NULL;
+
+						next->right = this;
+						this->parent = next;
+
+						AVLTree* x = this->remove(index);
+						return x->parent==NULL ? x:x->parent;
+
+					}else{
+						AVLTree* p = next->parent;
+						next->parent = this->parent;
+
+						this->parent = p;
+						if(p->left == next) p->left = this;
+						else p->right = this;
+
+						next->left = this->left;
+						if(this->left != NULL)
+							this->left->parent = next;
+						this->left = NULL;
+
+						p = this->right;
+						this->right = next->right;
+						if(next->right != NULL)
+							next->right->parent = this;
+
+						next->right = p;
+						p->parent = next;
+
+						AVLTree* x = this->remove(index);
+						return x->parent==NULL ? x:x->parent;
+					}
+				}
 			}
-		}
 
-		else if(index < this->index){
-			if(this->left == NULL)
-				throw new NotFoundException();
-			return this->left->remove(index);
 		}
-		else{
-			if(this->right == NULL)
-				throw new NotFoundException();
-			return this->right->remove(index);
-
+		else if(this->index < index){
+			AVLTree* tmp = this->right->remove(index);
+			return tmp->parent==NULL ? tmp : tmp->parent;
+		}
+		else{ // this->index > index
+			AVLTree* tmp = this->left->remove(index);
+			return tmp->parent==NULL ? tmp : tmp->parent;
 		}
 		return NULL;
 	}
@@ -485,7 +535,10 @@ public:
 				rotateLL(this);
 			}
 		}
-		return this->parent;
+		if(this->parent != NULL)
+			return this->parent->fixBalanceFactorRemove();
+		if(this->parent == NULL) return this;
+		else return this->parent;		// TODO: delete
 	}
 
 
@@ -521,6 +574,9 @@ public:
 		left->parent = parent;
 		root->left = left->right;
 		left->right = root;
+
+		if(root->left != NULL)
+			root->left->parent = root; // tal added this
 
 		root->height = h-2;					// update the size and height
 		root->size = nAr + nBr + 1;			// of both affected nodes
@@ -560,6 +616,10 @@ public:
 		right->parent = parent;
 		root->right = right->left;
 		right->left = root;
+
+		if(root->right != NULL)
+			root->right->parent = root; // tal added this
+
 
 		root->height = h-2;					// update the size and height
 		root->size = nAl + nBl + 1;			// of both affected nodes
@@ -603,17 +663,16 @@ public:
 		root->updateHeight();
 	}
 
-
 	/*
 	 * returns a pointer to an avl tree which will be the almost full tree
 	 * which will consist of index-info nodes as in the given arrays
 	 */
 	static AVLTree<T,S>* fillFromArray(S* indexes, T** info, int n)
-																																																																			{
-		AVLTree<T,S>* res = new AVLTree<T,S>(n);			// TODO: fuck this stupid fucking language
+																																																																													{
+		AVLTree<T,S>* res = new AVLTree<T,S>(n);
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
-																																																																			}
+																																																																													}
 
 
 	/*
@@ -630,6 +689,9 @@ public:
 	 */
 	int getSize()
 	{
+		if(this == NULL){		// if this happens, something got messed up
+			return -666;
+		}
 		return this->size;
 	}
 
@@ -639,11 +701,22 @@ public:
 	 */
 	int getHeight()
 	{
+		if(this == NULL){		// if this happens, something got messed up
+			return -666;
+		}
 		return this->height;
 	}
 
-	T* getInfo(){
+	T* getInfo()
+	{
+		if(this == NULL){		// if this happens, something got messed up
+			return NULL;
+		}
 		return this->info;
+	}
+
+	S getIndex(){
+		return this->index;
 	}
 
 
@@ -658,7 +731,7 @@ public:
 	int getBalanceFactor()
 	{
 		if(this == NULL)
-			throw new NullPointerException();
+			throw NullPointerException();
 		int lHeight = -1, rHeight = -1;
 		if(left != NULL)
 			lHeight = left->height;

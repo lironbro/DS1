@@ -18,15 +18,21 @@ class Department{
 private:
 	AVLTree<Magizoologist, int>* magis;
 	AVLTree<Creature, int>* creatures;
+	AVLTree<Creature, levelKey>* creaturesByLevel;
+	Creature* mostDangerous;
+	int mostDangerousId;
 
 
 public:
 
 	class DepartmentException : public std::exception {};
-	class CreatureIDAlreadyExistsException: public DepartmentException {};
-	class MagiIDAlreadyExistsException: public DepartmentException {};
-	class MagiIDNotFoundException: public DepartmentException {};
-	class NullPointerException: public DepartmentException {};
+	class CreatureIDAlreadyExistsException : public DepartmentException {};
+	class MagiIDAlreadyExistsException : public DepartmentException {};
+	class MagiIDNotFoundException : public DepartmentException {};
+	class NullPointerException : public DepartmentException {};
+	class CreatureIDNotFoundException : public DepartmentException {};
+	class InvalidInputException : public DepartmentException {};
+	class AllocationErrorException : public DepartmentException {};
 
 	Department();
 
@@ -52,8 +58,12 @@ public:
 	void getAllCreaturesByLevel(int magiID, int** creatures, int* numOfCreatures);
 
 
+	void updateMostDangerous();		// sets most dangerous to be the second most dangerous
+
+
 	~Department();
 
 };
+
 
 #endif /* DEPARTMENT_H_ */
