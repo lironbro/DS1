@@ -27,6 +27,12 @@ private:
 
 public:
 
+
+
+	class MagiAllocationErrorException : public std::exception{};
+
+
+
 	Magizoologist();
 
 
@@ -78,6 +84,9 @@ public:
 	}
 
 	bool operator==(levelKey key){
+		if(this == NULL){		// if this happens, something got messed up
+			return false;
+		}
 		return this->level == key.level && this->id == key.id;
 	}
 
@@ -88,7 +97,7 @@ public:
 	bool operator<=(levelKey key){
 		if(this->level < key.level)
 			return true;
-		if(this->id >= key.id)
+		if(this->level == key.level && this->id > key.id)
 			return true;
 		return false;
 	}
@@ -113,6 +122,10 @@ public:
 	}
 
 };
+
+
+
+
 
 template<class T>
 void Marge(Creature** A1,T* A2,int sizeA,Creature** B1,T* B2,int sizeB
@@ -140,6 +153,15 @@ void Marge(Creature** A1,T* A2,int sizeA,Creature** B1,T* B2,int sizeB
 	while(iB<sizeB) {
 		(*cratures)[i]=B1[iB];
 		(*indexes)[i++]=B2[iB++];
+	}
+}
+
+
+static void flip(int* a, int n){
+	for(int i=0; i<n/2; i++){
+		int temp = a[i];
+		a[i] = a[n - i - 1];
+		a[n - i -1] = temp;
 	}
 }
 

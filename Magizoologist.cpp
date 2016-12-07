@@ -17,10 +17,14 @@ Magizoologist::Magizoologist(){
 }
 
 AVLTree<Creature, int>* Magizoologist::getCreaturesById(){
+	if(this == NULL)
+		return NULL;
 	return this->creaturesById;
 }
 
 AVLTree<Creature, levelKey>* Magizoologist::getCreaturesByLevel(){
+	if(this == NULL)
+		return NULL;
 	return this->creaturesByLevel;
 }
 
@@ -35,8 +39,8 @@ void Magizoologist::addCreature(Creature* creature, int id){
 		mostDangerous = creature;
 		mostDangerousID = id;
 	}
-	else if(creature->getLevel() >= this->mostDangerous->getLevel() &&
-			this->mostDangerousID >= id){
+	else if(creature->getLevel() > this->mostDangerous->getLevel() ||
+			(creature->getLevel() == this->mostDangerous->getLevel() && this->mostDangerousID >= id)){
 		this->mostDangerous = creature;
 		mostDangerousID = id;
 	}
@@ -59,21 +63,16 @@ void Magizoologist::releaseCreature(int id){
 }
 
 
-static int** flip(int** creatures, int* numOfCreatures){
-	int** res = (int**)malloc(sizeof(int*)*(*numOfCreatures));
-	for(int i=0; i<*numOfCreatures; i++){
-		res[i] = creatures[*numOfCreatures-i-1];
-	}
-	return res;
-}
-
-
 Creature* Magizoologist::getMostDangerous(){
+	if(this == NULL)
+		return NULL;
 	return this->mostDangerous;
 }
 
 
 int Magizoologist::getMostDangerousID(){
+	if(this == NULL)
+		return -1;
 	return this->mostDangerousID;
 }
 
@@ -83,25 +82,43 @@ int Magizoologist::getMostDangerousID(){
  * current most dangerous
  */
 void Magizoologist::updateMostDangerous(){
+	if(this == NULL)
+		return ;
+	if(mostDangerous->getByLevel()->getParent() == NULL){
+		this->mostDangerous = NULL;
+		this->mostDangerousID = -1;
+		return;
+	}
 	this->mostDangerous = mostDangerous->getByLevel()->getParent()->getInfo();
+	this->mostDangerousID = mostDangerous->getByLevel()->getIndex().id;
 }
 
 
 void Magizoologist::getAllCreaturesByLevel(int** creatures, int* numOfCreatures)
 {
 	if(this->mostDangerousID == -1){		// if no creatures
-		creatures = NULL;
+		*creatures = NULL;
 		*numOfCreatures = 0;
+		return;
 	}
+	levelKey* keys = (levelKey*)malloc(sizeof(levelKey)*creaturesByLevel->getSize());
+	this->creaturesByLevel->turnToArrays(keys, NULL);	// we don't need the creatures themselves
 	*numOfCreatures = creaturesByLevel->getSize();
-	levelKey* lks = (levelKey*)malloc(sizeof(levelKey)*(*numOfCreatures));		//TODO: malloc?
-	creaturesByLevel->turnToArrays(lks, NULL);
-	*creatures = (int*)malloc(sizeof(*creatures));		//TODO: malloc, not sure where we allocate it
-	for(int i=0; i<*numOfCreatures; i++){
-		*creatures[i] = lks[i].level;
+	if(*numOfCreatures == 0){
+		free(keys);
+		creatures = NULL;
+		return;
 	}
-	creatures = flip(creatures, numOfCreatures);
-	free(lks);
+	int* indexes = (int*)malloc(sizeof(int)*(*numOfCreatures));
+	if(indexes == NULL)
+		throw MagiAllocationErrorException();
+	for(int i=0; i<*numOfCreatures; i++){
+		indexes[i] = keys[i].id;	// should be public
+	}
+	flip(indexes, *numOfCreatures);
+	*creatures = indexes;
+	free(keys);
+	return;
 }
 
 void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
@@ -170,6 +187,10 @@ void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
 
 
 Magizoologist::~Magizoologist(){
-	delete creaturesByLevel;
-	delete creaturesById;
+	if(this == NULL)
+		return;
+	if(creaturesByLevel != NULL)
+		delete creaturesByLevel;
+	if(creaturesById != NULL)
+		delete creaturesById;
 }

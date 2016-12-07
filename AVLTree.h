@@ -1,9 +1,5 @@
-/*
- * AVLTree.h
- *
- *  Created on: 4 áãöî 2016
- *      Author: user
- */
+
+
 
 #ifndef AVLTREE_H_
 #define AVLTREE_H_
@@ -143,6 +139,7 @@ public:
 
 
 	~AVLTree(){
+
 	}
 
 	/*
@@ -541,7 +538,7 @@ public:
 		if(this->parent != NULL)
 			return this->parent->fixBalanceFactorRemove();
 		if(this->parent == NULL) return this;
-		else return this->parent;
+		else return this->parent;		// TODO: delete
 	}
 
 
@@ -666,17 +663,16 @@ public:
 		root->updateHeight();
 	}
 
-
 	/*
 	 * returns a pointer to an avl tree which will be the almost full tree
 	 * which will consist of index-info nodes as in the given arrays
 	 */
 	static AVLTree<T,S>* fillFromArray(S* indexes, T** info, int n)
-																																																																																																					{
+																																																																									{
 		AVLTree<T,S>* res = new AVLTree<T,S>(n);
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
-																																																																																																					}
+																																																																									}
 
 
 	/*
@@ -693,6 +689,9 @@ public:
 	 */
 	int getSize()
 	{
+		if(this == NULL){		// if this happens, something got messed up
+			return -666;
+		}
 		return this->size;
 	}
 
@@ -702,11 +701,22 @@ public:
 	 */
 	int getHeight()
 	{
+		if(this == NULL){		// if this happens, something got messed up
+			return -666;
+		}
 		return this->height;
 	}
 
-	T* getInfo(){
+	T* getInfo()
+	{
+		if(this == NULL){		// if this happens, something got messed up
+			return NULL;
+		}
 		return this->info;
+	}
+
+	S getIndex(){
+		return this->index;
 	}
 
 
