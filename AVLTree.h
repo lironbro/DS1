@@ -291,8 +291,7 @@ public:
 					delete this;
 					p->updateHeight();
 					p->updateSize();
-					p->fixBalanceFactorRemove();
-					return p;
+					return p->fixBalanceFactorRemove();
 				}
 				else{
 					info = NULL;
@@ -314,8 +313,7 @@ public:
 					delete this;
 					p->updateHeight();
 					p->updateSize();
-					p->fixBalanceFactorRemove();
-					return p;
+					return p->fixBalanceFactorRemove();
 				}
 				else{
 					this->right->parent = NULL;
@@ -323,8 +321,7 @@ public:
 					delete this;
 					p->updateHeight();
 					p->updateSize();
-					p->fixBalanceFactorRemove();
-					return p;
+					return p->fixBalanceFactorRemove();
 				}
 			}
 			else if(left != NULL && right == NULL){
@@ -338,8 +335,7 @@ public:
 					delete this;
 					p->updateHeight();
 					p->updateSize();
-					p->fixBalanceFactorRemove();
-					return p;
+					return p->fixBalanceFactorRemove();
 				}
 				else{
 					this->left->parent = NULL;
@@ -347,8 +343,7 @@ public:
 					delete this;
 					p->updateHeight();
 					p->updateSize();
-					p->fixBalanceFactorRemove();
-					return p;
+					return p->fixBalanceFactorRemove();
 				}
 			}
 
@@ -543,7 +538,10 @@ public:
 				rotateLL(this);
 			}
 		}
-		return this->parent;
+		if(this->parent != NULL)
+			return this->parent->fixBalanceFactorRemove();
+		if(this->parent == NULL) return this;
+		else return this->parent;
 	}
 
 
@@ -580,7 +578,8 @@ public:
 		root->left = left->right;
 		left->right = root;
 
-		root->left->parent = root; // tal added this
+		if(root->left != NULL)
+			root->left->parent = root; // tal added this
 
 		root->height = h-2;					// update the size and height
 		root->size = nAr + nBr + 1;			// of both affected nodes
@@ -621,7 +620,8 @@ public:
 		root->right = right->left;
 		right->left = root;
 
-		root->right->parent = root; // tal added this
+		if(root->right != NULL)
+			root->right->parent = root; // tal added this
 
 
 		root->height = h-2;					// update the size and height
