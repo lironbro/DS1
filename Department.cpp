@@ -249,6 +249,9 @@ void Department::updateMostDangerous(){
 }
 
 
+Magizoologist* Department::getMagi(int id){
+	return magis->find(id)->getInfo();
+}
 
 
 Department::~Department(){

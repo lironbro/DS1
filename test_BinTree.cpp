@@ -201,10 +201,124 @@ bool releaseCreatureTest(Department* d){
 }
 
 
-bool replaceMagizoologistTest(Department* d){
+bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 
 	// ReplaceMagizoologist test
 
+	Magizoologist* magi;
+	AVLTree<Creature, int>* byId;
+	AVLTree<Creature, levelKey>* byLevel;
+
+	d->addMagizoologist(80);
+	d->addCreature(800, 80, 10);
+	d->addCreature(801, 80, 11);
+	magi = d->getMagi(80);
+	byId = magi->getCreaturesById();
+	byLevel = magi->getCreaturesByLevel();
+	// 80 will contain 800 (root), and 801 (right) (both by index and level)
+
+	d->addMagizoologist(81);
+	d->addCreature(810, 81, 10);
+	d->addCreature(811, 81, 20);
+	d->addCreature(812, 81, 5);
+	magi = d->getMagi(81);
+	byId = magi->getCreaturesById();
+	byLevel = magi->getCreaturesByLevel();
+	// 81 will contain 810 (root), 811 (right), and 812 (left) (by level)
+	// by index its 811 (root), 810(left), 812 (right)
+
+	d->addMagizoologist(82);
+	magi = d->getMagi(82);
+	byId = magi->getCreaturesById();
+	byLevel = magi->getCreaturesByLevel();
+	// 82 will be empty
+
+	d->addMagizoologist(83);
+	magi = d->getMagi(83);
+	byId = magi->getCreaturesById();
+	byLevel = magi->getCreaturesByLevel();
+	// 83 will be empty
+
+	d->replaceMagizoologist(80, 81);
+	magi = d->getMagi(81);
+	byId = magi->getCreaturesById();
+	byLevel = magi->getCreaturesByLevel();
+	magi = d->getMagi(80);
+	byId = magi->getCreaturesById();
+	byLevel = magi->getCreaturesByLevel();
+	// by level:
+	// 								10, 810 root
+	//			10, 800 left						20, 811 right
+	// 	5, 812 left			11, 801 right
+	//
+	// by index:
+	//								811 root
+	//			801 left							812 right
+	//	800 left			810 right
+	d->replaceMagizoologist(82, 83);
+	magi = d->getMagi(83);
+	// should be empty
+	d->replaceMagizoologist(81, 83);
+	// by level:
+	// 								10, 810 root
+	//			10, 800 left						20, 811 right
+	// 	5, 812 left			11, 801 right
+	//
+	// by index:
+	//								811 root
+	//			801 left							812 right
+	//	800 left			810 right
+
+	d->replaceMagizoologist(83, 123);
+	magi = d->getMagi(123);
+	byId = magi->getCreaturesById();
+	byLevel = magi->getCreaturesByLevel();
+	// by level:
+	// 								10, 810 root
+	//			10, 800 left						20, 811 right
+	// 	5, 812 left			11, 801 right
+	//
+	// by index:
+	//								811 root
+	//			801 left							812 right
+	//	800 left			810 right
+
+
+	d->releaseCreature(800);
+	// by level:
+	// 								10, 810 root
+	//			11, 801 left						20, 811 right
+	// 	5, 812 left
+	//
+	// by index:
+	//								811 root
+	//			801 left							812 right
+	//					810 right
+	d->releaseCreature(801);
+	// by level:
+	// 								10, 810 root
+	//			5, 812 left						20, 811 right
+	//
+	// by index:
+	//								811 root
+	//			810 left							812 right
+
+	d->releaseCreature(810);
+	// by level:
+	// 								20, 811 root
+	//			5, 812 left
+	//
+	// by index:
+	//								811 root
+	//											812 right
+	d->releaseCreature(811);
+	// by level:
+	// 								20, 812 root
+	//
+	// by index:
+	//								812 root
+	d->releaseCreature(812);
+	// empty
 
 	return true;
 }

@@ -128,7 +128,7 @@ public:
 
 
 template<class T>
-void Marge(Creature** A1,T* A2,int sizeA,Creature** B1,T* B2,int sizeB
+void Merge(Creature** A1,T* A2,int sizeA,Creature** B1,T* B2,int sizeB
 		,Creature*** cratures ,T** indexes)
 {
 	int iA=0,iB=0,i=0;

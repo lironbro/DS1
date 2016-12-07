@@ -145,7 +145,7 @@ public:
 	 * the height and size parameters should be correct
 	 */
 	AVLTree(int n, AVLTree* parent = NULL):
-		info(NULL), index(0), parent(NULL), left(NULL), right(NULL), size(n),
+		info(NULL), index(0), parent(parent), left(NULL), right(NULL), size(n),
 		height(0){
 		if(n < 1)		// this should never happen
 			return ;

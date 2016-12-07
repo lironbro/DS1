@@ -61,6 +61,9 @@ public:
 	void updateMostDangerous();		// sets most dangerous to be the second most dangerous
 
 
+	Magizoologist* getMagi(int id);
+
+
 	~Department();
 
 };

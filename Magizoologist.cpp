@@ -122,6 +122,7 @@ void Magizoologist::getAllCreaturesByLevel(int** creatures, int* numOfCreatures)
 }
 
 void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
+
 	if(this->creaturesById->getSize() == 0) return;
 
 	int thisSize = this->creaturesById->getSize(),
@@ -152,20 +153,20 @@ void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
 	delete rep->creaturesByLevel;
 	rep->creaturesByLevel=NULL;
 
-	for(int i=0;i<thisSize;i++){
+	for(int i=0;i<thisSize;i++){		// sets new magi
 		idInfo1[i]->setMagizoologist(rep);
 		levelInfo1[i]->setMagizoologist(rep);
 	}
 
 	Creature** idinfo=NULL ;
 	int* idindex=NULL ;
-	Marge<int>(idInfo1,idIndex1,thisSize,idInfo2,idIndex2,repSize,&idinfo,&idindex);
+	Merge<int>(idInfo1,idIndex1,thisSize,idInfo2,idIndex2,repSize,&idinfo,&idindex);
 
 	rep->creaturesById = rep->creaturesById->fillFromArray(idindex,idinfo,thisSize+repSize);
 
 	Creature** levelinfo=NULL ;
 	levelKey* levelindex=NULL ;
-	Marge<levelKey>(levelInfo1,levelIndex1,thisSize,levelInfo2,levelIndex2,repSize,&levelinfo,&levelindex);
+	Merge<levelKey>(levelInfo1,levelIndex1,thisSize,levelInfo2,levelIndex2,repSize,&levelinfo,&levelindex);
 
 	rep->creaturesByLevel = rep->creaturesByLevel->fillFromArray(levelindex,levelinfo,thisSize+repSize);
 
