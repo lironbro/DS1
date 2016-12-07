@@ -225,9 +225,7 @@ bool ResearchProjcectIncreaseLevelTest() {
 	ASSERT_EQUALS(200, mostDangerousID); // nothing was changed
 	ASSERT_EQUALS(SUCCESS, IncreaseLevel(r, 100, 600)); // level before = 701, level after = 1301
 	ASSERT_EQUALS(SUCCESS, GetMostDangerous(r, 1, &mostDangerousID));
-	printf("here we go %d\n", mostDangerousID);
 	ASSERT_EQUALS(100, mostDangerousID); // because it's level was updated to 1301 (the highest) two lines above
-	printf("passed");
 	Quit(&r);
 	return true;
 }
@@ -368,13 +366,13 @@ bool ResearchProjcectGetAllCreaturesByLevelTest() {
 }
 
 bool researchProjectTest() {
-	//RUN_TEST(ResearchProjectInitQuitStressTest);
-	//RUN_TEST(ResearchProjcectAddMagiTest);
-	//RUN_TEST(ResearchProjcectAddCreatureTest);
-	//RUN_TEST(ResearchProjcectReleaseCreatureTest);
-	//RUN_TEST(ResearchProjcectReplaceMagiTest);
+	RUN_TEST(ResearchProjectInitQuitStressTest);
+	RUN_TEST(ResearchProjcectAddMagiTest);
+	RUN_TEST(ResearchProjcectAddCreatureTest);
+	RUN_TEST(ResearchProjcectReleaseCreatureTest);
+	RUN_TEST(ResearchProjcectReplaceMagiTest);
 	RUN_TEST(ResearchProjcectIncreaseLevelTest);
-	//RUN_TEST(ResearchProjcectGetMostDangerousTest);
+	RUN_TEST(ResearchProjcectGetMostDangerousTest);
 	RUN_TEST(ResearchProjcectGetAllCreaturesByLevelTest);
 
 	return true;

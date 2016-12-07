@@ -170,6 +170,7 @@ void Department::increaseLevel(int creatureID, int delta){
 			this->mostDangerous = creature;
 			this->mostDangerousId = creatureID;
 		}
+		creature->setByLevel(magi->getCreaturesByLevel()->find(lk));
 	}
 	catch(AVLTree<Creature, int>::NotFoundException&){
 		throw CreatureIDNotFoundException();
