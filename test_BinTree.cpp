@@ -205,9 +205,9 @@ bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 
 	// ReplaceMagizoologist test
 
-	Magizoologist* magi;
-	AVLTree<Creature, int>* byId;
-	AVLTree<Creature, levelKey>* byLevel;
+	Magizoologist* magi=NULL;
+	AVLTree<Creature, int>* byId =NULL;
+	AVLTree<Creature, levelKey>* byLevel=NULL;
 
 	d->addMagizoologist(80);
 	d->addCreature(800, 80, 10);
@@ -243,7 +243,7 @@ bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 	magi = d->getMagi(81);
 	byId = magi->getCreaturesById();
 	byLevel = magi->getCreaturesByLevel();
-	magi = d->getMagi(80);
+	magi = d->getMagi(80);				// supposed to be NULL
 	byId = magi->getCreaturesById();
 	byLevel = magi->getCreaturesByLevel();
 	// by level:
@@ -257,8 +257,10 @@ bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 	//	800 left			810 right
 	d->replaceMagizoologist(82, 83);
 	magi = d->getMagi(83);
+	byId = magi->getCreaturesById();
 	// should be empty
-	d->replaceMagizoologist(81, 83);
+	d->replaceMagizoologist(81, 83);			// 83 is empty, 81 has 5 creatures
+	byId = magi->getCreaturesById();
 	// by level:
 	// 								10, 810 root
 	//			10, 800 left						20, 811 right
@@ -274,9 +276,9 @@ bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 	byId = magi->getCreaturesById();
 	byLevel = magi->getCreaturesByLevel();
 	// by level:
-	// 								10, 810 root
-	//			10, 800 left						20, 811 right
-	// 	5, 812 left			11, 801 right
+	// 								11, 801 root
+	//			10, 810 left						20, 811 right
+	// 	5, 812 left			10, 800 right
 	//
 	// by index:
 	//								811 root
@@ -285,16 +287,20 @@ bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 
 
 	d->releaseCreature(800);
+	magi = d->getMagi(123);
+	byId = magi->getCreaturesById();		// magi->byLevel is fine
 	// by level:
-	// 								10, 810 root
-	//			11, 801 left						20, 811 right
+	// 								11, 801 root
+	//			10, 810 left						20, 811 right
 	// 	5, 812 left
 	//
 	// by index:
 	//								811 root
 	//			801 left							812 right
 	//					810 right
-	d->releaseCreature(801);
+	d->releaseCreature(801);				// magi->byLevel gets ruined here
+	magi = d->getMagi(123);
+	byId = magi->getCreaturesById();
 	// by level:
 	// 								10, 810 root
 	//			5, 812 left						20, 811 right
@@ -304,6 +310,8 @@ bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 	//			810 left							812 right
 
 	d->releaseCreature(810);
+	magi = d->getMagi(123);
+	byId = magi->getCreaturesById();
 	// by level:
 	// 								20, 811 root
 	//			5, 812 left
@@ -312,13 +320,24 @@ bool replaceMagizoologistTest(Department* d){		//TODO: finish this ship
 	//								811 root
 	//											812 right
 	d->releaseCreature(811);
+	magi = d->getMagi(123);
+	byId = magi->getCreaturesById();
 	// by level:
 	// 								20, 812 root
 	//
 	// by index:
 	//								812 root
 	d->releaseCreature(812);
+	magi = d->getMagi(123);
+	byId = magi->getCreaturesById();
 	// empty
+
+	d->addCreature(812, 123, 666);
+	byId = magi->getCreaturesById();
+
+	d->releaseCreature(812);
+	byId = magi->getCreaturesById();
+
 
 	return true;
 }
@@ -493,7 +512,7 @@ bool getAllCreaturesByLevelTest(Department* d){
  */
 
 
-int main(){
+int mainTEEST(){
 
 
 	// init test - passed - GREAT SUCCESS

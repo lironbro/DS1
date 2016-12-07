@@ -60,3 +60,8 @@ void Creature::setByLevel(AVLTree<Creature, levelKey>* byLevel){
 		return ;
 	this->byLevel = byLevel;
 }
+
+
+Creature::~Creature(){
+
+}

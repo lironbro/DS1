@@ -47,6 +47,8 @@ public:
 	AVLTree<Creature, levelKey>* getByLevel();
 
 	void setByLevel(AVLTree<Creature, levelKey>* byLevel);
+
+	~Creature();
 };
 
 

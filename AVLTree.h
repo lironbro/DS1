@@ -93,7 +93,7 @@ private:
 	 * helps with turning the avl tree into an index and info array
 	 */
 	void aux_turnToArrays(S* indexes ,T** info, int i){
-		if (this == NULL){
+		if (this == NULL || size == 0 || indexes == NULL || info == NULL){
 			return;
 		}
 		if(left != NULL){
@@ -133,30 +133,24 @@ public:
 	}
 
 
-
-
-	~AVLTree(){
-
-	}
-
 	/*
 	 * creates an almost complete tree, which will have empty info
 	 * slots and indexes of 0
 	 * the height and size parameters should be correct
 	 */
-	AVLTree(int n, AVLTree* parent = NULL):
+	AVLTree(int n, AVLTree* parent):
 		info(NULL), index(0), parent(parent), left(NULL), right(NULL), size(n),
 		height(0){
 		if(n < 1)		// this should never happen
 			return ;
 		if(n == 1)
 		{
-			height = 1;
+			height = 0;
 			return;
 		}
-		this->height = floor(log2(n))+1;
-		int fullLeaves = pow(2, height-1);
-		int fullTree = pow(2, height)-1;
+		this->height = floor(log2(n));
+		int fullLeaves = pow(2, height);
+		int fullTree = pow(2, height+1)-1;
 		int dif = fullTree - n;		// the number of leaves missing for the tree to be full
 		if(dif == 0)	// if full tree
 		{
@@ -181,7 +175,7 @@ public:
 	 * finds the parent of the node with the requested index
 	 */
 	AVLTree* findParent(S index){
-		if(this == NULL){
+		if(this == NULL || size == 0){
 			return NULL;
 		}
 		else if(this->left->index == index || this->right->index == index){
@@ -200,7 +194,7 @@ public:
 	 * finds the value of the node with the requested index
 	 */
 	AVLTree* find(S index){
-		if(this == NULL){
+		if(this == NULL || size == 0){
 			return NULL;
 		}
 		else if(this->index == index){
@@ -284,12 +278,12 @@ public:
 					AVLTree* p = this->parent;
 					delete this;
 					p->updateHeight();
-					p->updateSize();
+					p->updateSize();		// <<<<<<<<<works till here
 					return p->fixBalanceFactorRemove();
 				}
 				else{
 					info = NULL;
-					index = -1;
+					index = 0;
 					size=0;
 					height=0;
 					return this;
@@ -367,7 +361,8 @@ public:
 					}else{
 						AVLTree* p = next->parent;
 						next->parent = this->parent;
-						if(this->parent->left == this) this->parent->left = next;
+						if(this->parent->left == this)
+							this->parent->left = next;
 						else this->parent->right = next;
 						this->parent = p;
 						if(p->left == next) p->left = this;
@@ -457,7 +452,7 @@ public:
 	 */
 	AVLTree* findNextInorder()
 	{
-		if(this == NULL || this->right == NULL)
+		if(this == NULL || this->right == NULL || size == 0)
 			return NULL;
 		return this->right->furthestLeft();
 	}
@@ -537,8 +532,7 @@ public:
 		}
 		if(this->parent != NULL)
 			return this->parent->fixBalanceFactorRemove();
-		if(this->parent == NULL) return this;
-		else return this->parent;		// TODO: delete
+		return this;
 	}
 
 
@@ -668,11 +662,11 @@ public:
 	 * which will consist of index-info nodes as in the given arrays
 	 */
 	static AVLTree<T,S>* fillFromArray(S* indexes, T** info, int n)
-																																																																													{
-		AVLTree<T,S>* res = new AVLTree<T,S>(n);
+																																																																																							{
+		AVLTree<T,S>* res = new AVLTree<T,S>(n, NULL);
 		res->aux_fillFromArray(indexes, info, 0);
 		return res;
-																																																																													}
+																																																																																							}
 
 
 	/*
@@ -716,12 +710,30 @@ public:
 	}
 
 	S getIndex(){
+		if(this == NULL)
+			return NULL;
 		return this->index;
 	}
 
 
 	AVLTree* getParent(){
+		if(this == NULL)
+			return NULL;
 		return this->parent;
+	}
+
+
+	AVLTree* getLeft(){
+		if(this == NULL)
+			return NULL;
+		return this->left;
+	}
+
+
+	AVLTree* getRight(){
+		if(this == NULL)
+			return NULL;
+		return this->right;
 	}
 
 
@@ -738,6 +750,34 @@ public:
 		if(right != NULL)
 			rHeight = right->height;
 		return lHeight - rHeight;
+	}
+
+
+	void QuitALL(){
+		if(this == NULL){
+			return;
+		}
+		right->QuitALL();
+		left->QuitALL();
+		delete info;
+		delete this;
+	}
+
+
+	void Quit(){
+		if(this == NULL){
+			return;
+		}
+		right->Quit();
+		left->Quit();
+		delete this;
+	}
+
+
+	~AVLTree(){
+		if(this == NULL){
+			return;
+		}
 	}
 
 };

@@ -105,8 +105,8 @@ void Department::releaseCreature(int creatureID){
 		if(magi->getMostDangerous() == creature)
 			magi->updateMostDangerous();		// update department's most dangerous if needed
 
-		creature->getById()->remove(creatureID);			// remove from magi id list
-		creature->getByLevel()->remove(levelKey(creature->getLevel(), creatureID));		// remove from magi level list
+		// i hate you so much for this >:C
+		magi->releaseCreature(creatureID);
 
 		// remove the creature from the department's trees
 		creatures = creatures->remove(creatureID);
@@ -131,9 +131,12 @@ void Department::replaceMagizoologist(int magiID, int replacementID){
 		Magizoologist* magi1 = this->magis->find(magiID)->getInfo();
 		Magizoologist* magi2 = this->magis->find(replacementID)->getInfo();
 
+		if(magi1 == NULL || magi2 == NULL)
+			throw MagiIDNotFoundException();
+
 		magi1->ReplaceMagizoologist(magi2);
 
-		this->magis->remove(magiID);
+		this->magis =  this->magis->remove(magiID);
 		delete magi1;
 
 	}
@@ -240,6 +243,11 @@ void Department::updateMostDangerous(){
 	if(this == NULL)
 		return ;
 	if(mostDangerous->getByLevel()->getParent() == NULL){
+		if(mostDangerous->getByLevel()->getLeft() != NULL){
+			this->mostDangerous = mostDangerous->getByLevel()->getLeft()->getInfo();
+			this->mostDangerousId = mostDangerous->getByLevel()->getIndex().id;
+			return;
+		}
 		this->mostDangerous = NULL;
 		this->mostDangerousId = -1;
 		return;
@@ -255,6 +263,7 @@ Magizoologist* Department::getMagi(int id){
 
 
 Department::~Department(){
-	delete creatures;
-	delete magis;
+	creatures->Quit();
+	magis->QuitALL();
+	creaturesByLevel->QuitALL();
 }

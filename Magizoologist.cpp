@@ -51,7 +51,6 @@ void Magizoologist::addCreature(Creature* creature, int id){
  * go to its owner
  * delete it from its tree
  */
-//TODO: this isn't supposed to be called from magizoologist
 void Magizoologist::releaseCreature(int id){
 	Creature* creature = (creaturesById->find(id))->getInfo();
 	creature->setMagizoologist(NULL);
@@ -85,6 +84,11 @@ void Magizoologist::updateMostDangerous(){
 	if(this == NULL)
 		return ;
 	if(mostDangerous->getByLevel()->getParent() == NULL){
+		if(mostDangerous->getByLevel()->getLeft() != NULL){
+			this->mostDangerous = mostDangerous->getByLevel()->getLeft()->getInfo();
+			this->mostDangerousID = mostDangerous->getByLevel()->getIndex().id;
+			return;
+		}
 		this->mostDangerous = NULL;
 		this->mostDangerousID = -1;
 		return;
@@ -121,9 +125,12 @@ void Magizoologist::getAllCreaturesByLevel(int** creatures, int* numOfCreatures)
 	return;
 }
 
+
+// TODO: most dangerous? pointing to magi's nodes?
 void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
 
-	if(this->creaturesById->getSize() == 0) return;
+	if(this->creaturesById->getSize() <= 0) 	// if this is empty
+		return;
 
 	int thisSize = this->creaturesById->getSize(),
 			repSize = rep->creaturesById->getSize();
@@ -140,10 +147,16 @@ void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
 	delete this->creaturesByLevel;
 	this->creaturesByLevel = new AVLTree<Creature, levelKey>();
 
-	Creature** idInfo2 = new Creature*[repSize];
-	Creature** levelInfo2 = new Creature*[repSize];
-	int* idIndex2 = new int[repSize];
-	levelKey* levelIndex2 = new levelKey[repSize];
+	Creature** idInfo2 = NULL; 		// replacement's info
+	Creature** levelInfo2 = NULL ;
+	int* idIndex2 = NULL;
+	levelKey* levelIndex2 = NULL;
+	if(repSize > 0){
+		idInfo2 =	new Creature*[repSize];
+		levelInfo2 = new Creature*[repSize];
+		idIndex2 = new int[repSize];
+		levelIndex2 = new levelKey[repSize];
+	}
 
 	rep->creaturesById->turnToArrays(idIndex2,idInfo2);
 	rep->creaturesByLevel->turnToArrays(levelIndex2,levelInfo2);
@@ -170,21 +183,29 @@ void Magizoologist::ReplaceMagizoologist(Magizoologist* rep){
 
 	rep->creaturesByLevel = rep->creaturesByLevel->fillFromArray(levelindex,levelinfo,thisSize+repSize);
 
-	delete idInfo1;
-	delete idInfo2;
-	delete levelInfo1;
-	delete levelInfo2;
-	delete idIndex1;
-	delete idIndex2;
-	delete levelIndex1;
-	delete levelIndex2;
-	delete idinfo;
-	delete idindex;
-	delete levelinfo;
-	delete levelindex;
+	rep->mostDangerous = levelinfo[thisSize+repSize-1];
+	rep->mostDangerousID = levelindex[thisSize+repSize-1].id;
+
+	for(int i=0 ;i<thisSize+repSize;i++){
+		idinfo[i]->setById(rep->creaturesById->find(idindex[i]));
+		levelinfo[i]->setByLevel(rep->creaturesByLevel->find(levelindex[i]));
+	}
+
+	delete[] idInfo1;
+	delete[] levelInfo1;
+	delete[] idIndex1;
+	delete[] levelIndex1;
+	delete[] idinfo;
+	delete[] idindex;
+	delete[] levelinfo;
+	delete[] levelindex;
+	if(repSize > 0){
+		delete[] idInfo2;
+		delete[] levelInfo2;
+		delete[] idIndex2;
+		delete[] levelIndex2;
+	}
 }
-
-
 
 
 Magizoologist::~Magizoologist(){
