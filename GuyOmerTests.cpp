@@ -378,7 +378,7 @@ bool researchProjectTest() {
 	return true;
 }
 
-int main() {
+int main17() {
 	researchProjectTest();
 	// getchar();
 	return 0;
